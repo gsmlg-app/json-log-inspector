@@ -8,15 +8,6 @@ import 'package:json_log_inspector/screens/settings/appearance_settings_screen.d
 import 'package:json_log_inspector/screens/settings/controller_settings_screen.dart';
 import 'package:json_log_inspector/screens/settings/controller_test_screen.dart';
 import 'package:json_log_inspector/screens/settings/settings_screen.dart';
-import 'package:json_log_inspector/screens/showcase/adaptive_demo_screen.dart';
-import 'package:json_log_inspector/screens/showcase/artwork_demo_screen.dart';
-import 'package:json_log_inspector/screens/showcase/chart_demo_screen.dart';
-import 'package:json_log_inspector/screens/showcase/client_info_screen.dart';
-import 'package:json_log_inspector/screens/showcase/feedback_demo_screen.dart';
-import 'package:json_log_inspector/screens/showcase/form_demo_screen.dart';
-import 'package:json_log_inspector/screens/showcase/showcase_screen.dart';
-import 'package:json_log_inspector/screens/showcase/vault_demo_screen.dart';
-import 'package:json_log_inspector/screens/showcase/webview_demo_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
@@ -56,107 +47,6 @@ class AppRouter {
           child: const HomeScreen(),
         );
       },
-    ),
-    GoRoute(
-      name: ShowcaseScreen.name,
-      path: ShowcaseScreen.path,
-      pageBuilder: (context, state) {
-        return NoTransitionPage<void>(
-          key: state.pageKey,
-          restorationId: state.pageKey.value,
-          child: const ShowcaseScreen(),
-        );
-      },
-      routes: [
-        GoRoute(
-          name: FeedbackDemoScreen.name,
-          path: FeedbackDemoScreen.path,
-          pageBuilder: (context, state) {
-            return NoTransitionPage<void>(
-              key: state.pageKey,
-              restorationId: state.pageKey.value,
-              child: const FeedbackDemoScreen(),
-            );
-          },
-        ),
-        GoRoute(
-          name: AdaptiveDemoScreen.name,
-          path: AdaptiveDemoScreen.path,
-          pageBuilder: (context, state) {
-            return NoTransitionPage<void>(
-              key: state.pageKey,
-              restorationId: state.pageKey.value,
-              child: const AdaptiveDemoScreen(),
-            );
-          },
-        ),
-        GoRoute(
-          name: ArtworkDemoScreen.name,
-          path: ArtworkDemoScreen.path,
-          pageBuilder: (context, state) {
-            return NoTransitionPage<void>(
-              key: state.pageKey,
-              restorationId: state.pageKey.value,
-              child: const ArtworkDemoScreen(),
-            );
-          },
-        ),
-        GoRoute(
-          name: ChartDemoScreen.name,
-          path: ChartDemoScreen.path,
-          pageBuilder: (context, state) {
-            return NoTransitionPage<void>(
-              key: state.pageKey,
-              restorationId: state.pageKey.value,
-              child: const ChartDemoScreen(),
-            );
-          },
-        ),
-        GoRoute(
-          name: WebViewDemoScreen.name,
-          path: WebViewDemoScreen.path,
-          pageBuilder: (context, state) {
-            return NoTransitionPage<void>(
-              key: state.pageKey,
-              restorationId: state.pageKey.value,
-              child: const WebViewDemoScreen(),
-            );
-          },
-        ),
-        GoRoute(
-          name: ClientInfoScreen.name,
-          path: ClientInfoScreen.path,
-          pageBuilder: (context, state) {
-            return NoTransitionPage<void>(
-              key: state.pageKey,
-              restorationId: state.pageKey.value,
-              child: const ClientInfoScreen(),
-            );
-          },
-        ),
-        GoRoute(
-          name: FormDemoScreen.name,
-          path: FormDemoScreen.path,
-          pageBuilder: (context, state) {
-            return NoTransitionPage<void>(
-              key: state.pageKey,
-              restorationId: state.pageKey.value,
-              child: const FormDemoScreen(),
-            );
-          },
-        ),
-        GoRoute(
-          name: VaultDemoScreen.name,
-          path: VaultDemoScreen.path,
-          pageBuilder: (context, state) {
-            return NoTransitionPage<void>(
-              key: state.pageKey,
-              restorationId: state.pageKey.value,
-              child: const VaultDemoScreen(),
-            );
-          },
-        ),
-      ],
     ),
     GoRoute(
       name: SettingsScreen.name,

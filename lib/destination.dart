@@ -2,14 +2,12 @@ import 'package:app_locale/app_locale.dart';
 import 'package:flutter/material.dart';
 import 'package:json_log_inspector/screens/home/home_screen.dart';
 import 'package:json_log_inspector/screens/settings/settings_screen.dart';
-import 'package:json_log_inspector/screens/showcase/showcase_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class Destinations {
   /// List of route names corresponding to navigation destinations
   static const List<String> routeNames = [
     HomeScreen.name,
-    ShowcaseScreen.name,
     SettingsScreen.name,
   ];
 
@@ -21,13 +19,7 @@ class Destinations {
           selectedIcon: const Icon(Icons.home),
           label: context.l10n.navHome,
         ),
-        NavigationDestination(
-          key: const Key(ShowcaseScreen.name),
-          icon: const Icon(Icons.widgets_outlined),
-          selectedIcon: const Icon(Icons.widgets),
-          label: context.l10n.navShowcase,
-        ),
-        NavigationDestination(
+NavigationDestination(
           key: const Key(SettingsScreen.name),
           icon: const Icon(Icons.settings_outlined),
           selectedIcon: const Icon(Icons.settings),
