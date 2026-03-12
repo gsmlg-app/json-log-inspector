@@ -112,7 +112,7 @@ class _FilterInputState extends State<_FilterInput> {
   FilterOperator? _parseOperator(String str) {
     return switch (str.toLowerCase()) {
       'eq' || 'equals' || '==' => FilterOperator.equals,
-      'ne' || 'notEquals' || '!=' => FilterOperator.notEquals,
+      'ne' || 'notequals' || '!=' => FilterOperator.notEquals,
       'contains' || '~' => FilterOperator.contains,
       'gt' || '>' => FilterOperator.greaterThan,
       'lt' || '<' => FilterOperator.lessThan,

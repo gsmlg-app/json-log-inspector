@@ -131,7 +131,7 @@ class _InitialView extends StatelessWidget {
   Future<void> _pickFile(BuildContext context) async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['jsonl', 'json'],
+      allowedExtensions: ['jsonl', 'json', 'log'],
     );
 
     if (result != null && result.files.single.path != null) {
@@ -180,6 +180,7 @@ class _LoadedViewState extends State<_LoadedView> {
                   selectedRecord: _selectedRecord,
                   pairedRecord: _pairedRecord,
                   onEntrySelected: (record, paired) {
+                    if (!mounted) return;
                     setState(() {
                       _selectedRecord = record;
                       _pairedRecord = paired;
@@ -204,11 +205,18 @@ class _LoadedViewState extends State<_LoadedView> {
   }
 }
 
-class _Toolbar extends StatelessWidget {
+class _Toolbar extends StatefulWidget {
   const _Toolbar({required this.fileState, required this.displayCount});
 
   final LogFileState fileState;
   final int displayCount;
+
+  @override
+  State<_Toolbar> createState() => _ToolbarState();
+}
+
+class _ToolbarState extends State<_Toolbar> {
+  int _filterGeneration = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -289,7 +297,7 @@ class _Toolbar extends StatelessWidget {
   }
 
   void _showFilterRuleBuilder(BuildContext context) {
-    final keyPaths = fileState.keyPaths;
+    final keyPaths = widget.fileState.keyPaths;
     showDialog(
       context: context,
       builder: (dialogContext) {
@@ -357,13 +365,17 @@ class _Toolbar extends StatelessWidget {
 
     if (state.index == null || state.filePath == null) return;
 
+    final generation = ++_filterGeneration;
+
     FilterEngine.buildFilteredIndex(
       filePath: state.filePath!,
       index: state.index!,
       rules: filterState.rules,
       searchQuery: filterState.searchQuery,
     ).then((filtered) {
-      logFileBloc.add(FilterApplied(filtered));
+      if (_filterGeneration == generation && mounted) {
+        logFileBloc.add(FilterApplied(filtered));
+      }
     });
   }
 }
@@ -443,7 +455,7 @@ class _MobileLayout extends StatelessWidget {
   }
 }
 
-class _LogList extends StatelessWidget {
+class _LogList extends StatefulWidget {
   const _LogList({
     required this.displayIndices,
     required this.entryReader,
@@ -457,20 +469,43 @@ class _LogList extends StatelessWidget {
   final void Function(LogRecord record, LogRecord? paired) onEntrySelected;
 
   @override
+  State<_LogList> createState() => _LogListState();
+}
+
+class _LogListState extends State<_LogList> {
+  final _futureCache = <int, Future<String>>{};
+
+  @override
+  void didUpdateWidget(_LogList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.entryReader != widget.entryReader ||
+        oldWidget.displayIndices != widget.displayIndices) {
+      _futureCache.clear();
+    }
+  }
+
+  Future<String> _getCachedFuture(int lineIndex) {
+    return _futureCache.putIfAbsent(
+      lineIndex,
+      () => widget.entryReader.readRawLine(lineIndex),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: displayIndices.length,
+      itemCount: widget.displayIndices.length,
       itemExtent: 36,
       itemBuilder: (context, i) {
-        final lineIndex = displayIndices[i];
+        final lineIndex = widget.displayIndices[i];
         return FutureBuilder<String>(
-          future: entryReader.readRawLine(lineIndex),
+          future: _getCachedFuture(lineIndex),
           builder: (context, snapshot) {
             final rawLine = snapshot.data ?? '...';
             return LogListTile(
               rawLine: rawLine,
               index: lineIndex,
-              onTap: () => _selectEntry(context, lineIndex),
+              onTap: () => _selectEntry(lineIndex),
             );
           },
         );
@@ -478,24 +513,24 @@ class _LogList extends StatelessWidget {
     );
   }
 
-  Future<void> _selectEntry(BuildContext context, int lineIndex) async {
-    final record = await entryReader.readEntry(lineIndex);
-    if (record == null) return;
+  Future<void> _selectEntry(int lineIndex) async {
+    final record = await widget.entryReader.readEntry(lineIndex);
+    if (record == null || !mounted) return;
 
     LogRecord? paired;
     if (record.recordType == 'request' || record.recordType == 'response') {
-      final pairIndices = index.requestIdMap[record.requestId];
+      final pairIndices = widget.index.requestIdMap[record.requestId];
       if (pairIndices != null) {
         for (final pairIdx in pairIndices) {
           if (pairIdx != lineIndex) {
-            paired = await entryReader.readEntry(pairIdx);
+            paired = await widget.entryReader.readEntry(pairIdx);
             break;
           }
         }
       }
     }
 
-    onEntrySelected(record, paired);
+    widget.onEntrySelected(record, paired);
   }
 }
 
@@ -514,7 +549,7 @@ class _StatusBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fileName = filePath.split('/').last;
+    final fileName = filePath.split(RegExp(r'[/\\]')).last;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(

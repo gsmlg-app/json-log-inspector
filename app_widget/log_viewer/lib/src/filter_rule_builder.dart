@@ -131,7 +131,7 @@ class _FilterRuleBuilderState extends State<FilterRuleBuilder> {
           ),
           const SizedBox(height: 12),
           DropdownButtonFormField<FilterOperator>(
-            initialValue: _selectedOperator,
+            value: _selectedOperator,
             decoration: const InputDecoration(
               labelText: 'Operator',
               border: OutlineInputBorder(),

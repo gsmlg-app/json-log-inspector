@@ -16,6 +16,8 @@ class LogFileBloc extends Bloc<LogFileEvent, LogFileState> {
     FileOpened event,
     Emitter<LogFileState> emitter,
   ) async {
+    await state.entryReader?.dispose();
+
     emitter(
       state.copyWith(status: LogFileStatus.loading, filePath: event.path),
     );
@@ -40,7 +42,14 @@ class LogFileBloc extends Bloc<LogFileEvent, LogFileState> {
   }
 
   void _onCleared(Cleared event, Emitter<LogFileState> emitter) {
+    state.entryReader?.dispose();
     emitter(const LogFileState());
+  }
+
+  @override
+  Future<void> close() async {
+    await state.entryReader?.dispose();
+    return super.close();
   }
 
   void _onFilterApplied(FilterApplied event, Emitter<LogFileState> emitter) {

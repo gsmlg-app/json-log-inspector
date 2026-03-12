@@ -1,6 +1,7 @@
-/// A generic Least Recently Used (LRU) cache.
+/// A generic Least Recently Used (LRU) cache backed by [LinkedHashMap].
 ///
-/// Evicts the least recently accessed entry when [maxSize] is exceeded.
+/// Both [get] and [put] are O(1). Evicts the least recently accessed
+/// entry when [maxSize] is exceeded.
 class LruCache<K, V> {
   /// Creates an LRU cache with the given [maxSize].
   LruCache({this.maxSize = 500});
@@ -9,16 +10,15 @@ class LruCache<K, V> {
   final int maxSize;
 
   final _cache = <K, V>{};
-  final _order = <K>[];
 
   /// Returns the value for [key], or `null` if not present.
   ///
   /// Promotes the key to the most recently used position.
   V? get(K key) {
-    if (_cache.containsKey(key)) {
-      _order.remove(key);
-      _order.add(key);
-      return _cache[key];
+    final value = _cache.remove(key);
+    if (value != null) {
+      _cache[key] = value;
+      return value;
     }
     return null;
   }
@@ -27,20 +27,16 @@ class LruCache<K, V> {
   ///
   /// If the cache exceeds [maxSize], the least recently used entry is evicted.
   void put(K key, V value) {
-    if (_cache.containsKey(key)) {
-      _order.remove(key);
-    } else if (_cache.length >= maxSize) {
-      final evicted = _order.removeAt(0);
-      _cache.remove(evicted);
-    }
+    _cache.remove(key);
     _cache[key] = value;
-    _order.add(key);
+    if (_cache.length > maxSize) {
+      _cache.remove(_cache.keys.first);
+    }
   }
 
   /// Removes all entries from the cache.
   void clear() {
     _cache.clear();
-    _order.clear();
   }
 
   /// The number of entries currently in the cache.

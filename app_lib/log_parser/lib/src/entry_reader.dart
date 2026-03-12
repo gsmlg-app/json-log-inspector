@@ -10,6 +10,9 @@ import 'lru_cache.dart';
 ///
 /// Parsed [LogRecord] instances are cached in an LRU cache to avoid
 /// redundant I/O and parsing for recently accessed entries.
+///
+/// Call [dispose] when the reader is no longer needed to release the
+/// file handle.
 class EntryReader {
   /// Creates an [EntryReader] for the file at [filePath] using the
   /// given [index]. The [cacheSize] controls how many parsed records
@@ -18,7 +21,8 @@ class EntryReader {
     required this.filePath,
     required this.index,
     int cacheSize = 500,
-  }) : _cache = LruCache<int, LogRecord>(maxSize: cacheSize);
+  }) : _cache = LruCache<int, LogRecord>(maxSize: cacheSize),
+       _rawLineCache = LruCache<int, String>(maxSize: cacheSize);
 
   /// The path to the JSONL file.
   final String filePath;
@@ -27,6 +31,14 @@ class EntryReader {
   final FileIndexResult index;
 
   final LruCache<int, LogRecord> _cache;
+  final LruCache<int, String> _rawLineCache;
+
+  RandomAccessFile? _raf;
+
+  Future<RandomAccessFile> _getHandle() async {
+    _raf ??= await File(filePath).open();
+    return _raf!;
+  }
 
   /// Reads and parses the log entry at [lineIndex].
   ///
@@ -48,14 +60,23 @@ class EntryReader {
 
   /// Reads the raw line text at [lineIndex] from the file.
   Future<String> readRawLine(int lineIndex) async {
+    final cachedLine = _rawLineCache.get(lineIndex);
+    if (cachedLine != null) return cachedLine;
+
     final line = index.lines[lineIndex];
-    final raf = await File(filePath).open();
-    try {
-      await raf.setPosition(line.offset);
-      final bytes = await raf.read(line.length);
-      return utf8.decode(bytes);
-    } finally {
-      await raf.close();
-    }
+    final raf = await _getHandle();
+    await raf.setPosition(line.offset);
+    final bytes = await raf.read(line.length);
+    final text = utf8.decode(bytes);
+    _rawLineCache.put(lineIndex, text);
+    return text;
+  }
+
+  /// Releases the file handle. Safe to call multiple times.
+  Future<void> dispose() async {
+    await _raf?.close();
+    _raf = null;
+    _cache.clear();
+    _rawLineCache.clear();
   }
 }
