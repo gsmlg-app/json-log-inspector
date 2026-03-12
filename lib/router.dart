@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:json_log_inspector/screens/app/error_screen.dart';
 import 'package:json_log_inspector/screens/app/splash_screen.dart';
 import 'package:json_log_inspector/screens/home/home_screen.dart';
+import 'package:json_log_inspector/screens/log_viewer/log_viewer_screen.dart';
 import 'package:json_log_inspector/screens/settings/accent_color_settings_screen.dart';
 import 'package:json_log_inspector/screens/settings/app_settings_screen.dart';
 import 'package:json_log_inspector/screens/settings/appearance_settings_screen.dart';
@@ -18,7 +19,7 @@ class AppRouter {
   static GoRouter router = GoRouter(
     navigatorKey: key,
     debugLogDiagnostics: true,
-    initialLocation: SplashScreen.path,
+    initialLocation: LogViewerScreen.path,
     routes: routes,
     errorBuilder: (context, state) {
       return ErrorScreen(routerState: state);
@@ -34,6 +35,17 @@ class AppRouter {
           key: state.pageKey,
           restorationId: state.pageKey.value,
           child: const SplashScreen(),
+        );
+      },
+    ),
+    GoRoute(
+      name: LogViewerScreen.name,
+      path: LogViewerScreen.path,
+      pageBuilder: (context, state) {
+        return NoTransitionPage<void>(
+          key: state.pageKey,
+          restorationId: state.pageKey.value,
+          child: const LogViewerScreen(),
         );
       },
     ),

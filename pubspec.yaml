@@ -14,15 +14,19 @@ workspace:
   - app_lib/locale
   - app_lib/provider
   - app_lib/logging
+  - app_lib/log_models
+  - app_lib/log_parser
   - app_lib/secure_storage
   - app_bloc/gamepad
   - app_bloc/navigation
   - app_bloc/theme
+  - app_bloc/log_viewer
   - app_widget/adaptive
   - app_widget/artwork
   - app_widget/chart
   - app_widget/feedback
   - app_widget/web_view
+  - app_widget/log_viewer
   - app_form/demo
   - app_plugin/client_info/client_info
   - app_plugin/client_info/client_info_platform_interface
@@ -58,7 +62,11 @@ dependencies:
   lottie: ^3.3.1
   google_fonts: ^6.2.1
 
+  file_picker: ^8.0.0
+
   # workspace packages
+  log_models: any
+  log_parser: any
   app_database: any
   app_gamepad: any
   app_theme: any
@@ -67,6 +75,7 @@ dependencies:
   gamepad_bloc: any
   nav_bloc: any
   theme_bloc: any
+  log_viewer_bloc: any
   app_artwork: any
   app_chart: any
   app_client_info: any
@@ -76,6 +85,7 @@ dependencies:
   app_logging: any
   app_secure_storage: any
   app_web_view: any
+  log_viewer_widgets: any
   demo_form: any
   flutter_form_bloc: any
 

@@ -1,0 +1,22 @@
+name: log_viewer_bloc
+description: BLoC state management for JSON log viewer
+publish_to: "none"
+version: 1.0.0
+
+environment:
+  sdk: ">=3.8.0 <4.0.0"
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  bloc: ^9.0.0
+  equatable: ^2.0.7
+  shared_preferences: ^2.3.5
+  log_models: any
+  log_parser: any
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0

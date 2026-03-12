@@ -1,0 +1,16 @@
+name: log_parser
+description: JSONL log file parser with lazy streaming and filtering
+publish_to: "none"
+version: 1.0.0
+
+environment:
+  sdk: ">=3.8.0 <4.0.0"
+resolution: workspace
+
+dependencies:
+  log_models: any
+  meta: ^1.11.0
+
+dev_dependencies:
+  test: ^1.26.3
+  flutter_lints: ^6.0.0
