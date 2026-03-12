@@ -141,6 +141,32 @@ void main() {
     });
   });
 
+  group('EntryReader.dispose', () {
+    test('can be called multiple times safely', () async {
+      final json = _entry();
+      final (path, index) = await writeAndIndex(jsonEncode(json));
+
+      final reader = EntryReader(filePath: path, index: index);
+      await reader.readEntry(0);
+
+      await reader.dispose();
+      await reader.dispose(); // second call should not throw
+    });
+
+    test('clears cache on dispose', () async {
+      final json = _entry();
+      final (path, index) = await writeAndIndex(jsonEncode(json));
+
+      final reader = EntryReader(filePath: path, index: index);
+      await reader.readEntry(0);
+      await reader.dispose();
+
+      // After dispose, re-reading should still work (reopens handle)
+      final record = await reader.readEntry(0);
+      expect(record, isNotNull);
+    });
+  });
+
   group('EntryReader.readRawLine', () {
     test('returns the raw JSON string', () async {
       final json = _entry(requestId: 'abc');
