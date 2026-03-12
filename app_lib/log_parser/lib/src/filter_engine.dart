@@ -94,7 +94,7 @@ class FilterEngine {
           try {
             final json = jsonDecode(rawLine) as Map<String, dynamic>;
             if (!_matchesFiltersFromJson(json, enabledRules)) continue;
-          } on Object {
+          } on FormatException {
             continue;
           }
         }

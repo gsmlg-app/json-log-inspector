@@ -115,7 +115,7 @@ class FileIndexer {
       if (requestId is String) {
         requestIdMap.putIfAbsent(requestId, () => []).add(lineIndex);
       }
-    } on Object {
+    } on FormatException {
       onResult(false);
     }
   }
