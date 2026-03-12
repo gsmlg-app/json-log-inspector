@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:json_log_inspector/screens/home/home_screen.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:app_locale/app_locale.dart';
 
 void main() {
   group('HomeScreen', () {
+    Widget buildHomeScreen({ThemeData? theme}) {
+      return MaterialApp(
+        theme: theme,
+        home: const HomeScreen(),
+      );
+    }
+
     testWidgets('renders correctly with basic components', (
       WidgetTester tester,
     ) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          localizationsDelegates: AppLocale.localizationsDelegates,
-          supportedLocales: AppLocale.supportedLocales,
-          home: const HomeScreen(),
-        ),
-      );
+      await tester.pumpWidget(buildHomeScreen());
 
       expect(find.byType(HomeScreen), findsOneWidget);
       expect(find.byType(SafeArea), findsAtLeastNWidgets(1));
@@ -22,13 +22,7 @@ void main() {
     });
 
     testWidgets('displays throw error button', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          localizationsDelegates: AppLocale.localizationsDelegates,
-          supportedLocales: AppLocale.supportedLocales,
-          home: const HomeScreen(),
-        ),
-      );
+      await tester.pumpWidget(buildHomeScreen());
 
       expect(find.byType(TextButton), findsOneWidget);
       expect(find.text('Throw Error'), findsOneWidget);
@@ -38,16 +32,13 @@ void main() {
       WidgetTester tester,
     ) async {
       await tester.pumpWidget(
-        MaterialApp(
-          localizationsDelegates: AppLocale.localizationsDelegates,
-          supportedLocales: AppLocale.supportedLocales,
+        buildHomeScreen(
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
               seedColor: Colors.blue,
               error: Colors.red,
             ),
           ),
-          home: const HomeScreen(),
         ),
       );
 
@@ -60,13 +51,7 @@ void main() {
     testWidgets('throws exception when throw error button is pressed', (
       WidgetTester tester,
     ) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          localizationsDelegates: AppLocale.localizationsDelegates,
-          supportedLocales: AppLocale.supportedLocales,
-          home: const HomeScreen(),
-        ),
-      );
+      await tester.pumpWidget(buildHomeScreen());
 
       final button = find.byType(TextButton);
       expect(button, findsOneWidget);
@@ -80,15 +65,8 @@ void main() {
     testWidgets('uses correct screen dimensions for container', (
       WidgetTester tester,
     ) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          localizationsDelegates: AppLocale.localizationsDelegates,
-          supportedLocales: AppLocale.supportedLocales,
-          home: const HomeScreen(),
-        ),
-      );
+      await tester.pumpWidget(buildHomeScreen());
 
-      // Find the main container (should be at least one)
       expect(find.byType(Container), findsAtLeastNWidgets(1));
     });
 
@@ -97,13 +75,7 @@ void main() {
     ) async {
       await tester.binding.setSurfaceSize(const Size(1200, 800));
 
-      await tester.pumpWidget(
-        MaterialApp(
-          localizationsDelegates: AppLocale.localizationsDelegates,
-          supportedLocales: AppLocale.supportedLocales,
-          home: const HomeScreen(),
-        ),
-      );
+      await tester.pumpWidget(buildHomeScreen());
 
       expect(find.byType(HomeScreen), findsOneWidget);
 
@@ -113,29 +85,15 @@ void main() {
     testWidgets('container has correct decoration', (
       WidgetTester tester,
     ) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          localizationsDelegates: AppLocale.localizationsDelegates,
-          supportedLocales: AppLocale.supportedLocales,
-          home: const HomeScreen(),
-        ),
-      );
+      await tester.pumpWidget(buildHomeScreen());
 
-      // Find containers and check if any have decoration
       final containers = find.byType(Container);
       expect(containers, findsAtLeastNWidgets(1));
     });
 
     testWidgets('displays logo correctly', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          localizationsDelegates: AppLocale.localizationsDelegates,
-          supportedLocales: AppLocale.supportedLocales,
-          home: const HomeScreen(),
-        ),
-      );
+      await tester.pumpWidget(buildHomeScreen());
 
-      // Check for any logo-related widgets
       expect(find.byType(HomeScreen), findsOneWidget);
     });
   });
