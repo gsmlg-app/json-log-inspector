@@ -1,8 +1,8 @@
 import 'package:app_adaptive_widgets/app_adaptive_widgets.dart';
 import 'package:app_artwork/app_artwork.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app_template/destination.dart';
-import 'package:flutter_app_template/screens/showcase/showcase_screen.dart';
+import 'package:json_log_inspector/destination.dart';
+import 'package:json_log_inspector/screens/showcase/showcase_screen.dart';
 
 class ArtworkDemoScreen extends StatefulWidget {
   static const name = 'Artwork Demo';

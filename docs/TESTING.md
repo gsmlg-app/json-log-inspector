@@ -49,7 +49,7 @@ The CI pipeline runs:
 The following packages have test directories:
 
 ### Main Application
-- `flutter_app_template` - Main app tests including screen tests in `test/screens/`
+- `json_log_inspector` - Main app tests including screen tests in `test/screens/`
 
 ### BLoC Packages
 - `theme_bloc` - Theme state management tests

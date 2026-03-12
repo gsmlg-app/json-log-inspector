@@ -1,14 +1,14 @@
 import 'package:app_adaptive_widgets/app_adaptive_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app_template/destination.dart';
-import 'package:flutter_app_template/screens/showcase/adaptive_demo_screen.dart';
-import 'package:flutter_app_template/screens/showcase/artwork_demo_screen.dart';
-import 'package:flutter_app_template/screens/showcase/chart_demo_screen.dart';
-import 'package:flutter_app_template/screens/showcase/client_info_screen.dart';
-import 'package:flutter_app_template/screens/showcase/feedback_demo_screen.dart';
-import 'package:flutter_app_template/screens/showcase/form_demo_screen.dart';
-import 'package:flutter_app_template/screens/showcase/vault_demo_screen.dart';
-import 'package:flutter_app_template/screens/showcase/webview_demo_screen.dart';
+import 'package:json_log_inspector/destination.dart';
+import 'package:json_log_inspector/screens/showcase/adaptive_demo_screen.dart';
+import 'package:json_log_inspector/screens/showcase/artwork_demo_screen.dart';
+import 'package:json_log_inspector/screens/showcase/chart_demo_screen.dart';
+import 'package:json_log_inspector/screens/showcase/client_info_screen.dart';
+import 'package:json_log_inspector/screens/showcase/feedback_demo_screen.dart';
+import 'package:json_log_inspector/screens/showcase/form_demo_screen.dart';
+import 'package:json_log_inspector/screens/showcase/vault_demo_screen.dart';
+import 'package:json_log_inspector/screens/showcase/webview_demo_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class ShowcaseScreen extends StatelessWidget {

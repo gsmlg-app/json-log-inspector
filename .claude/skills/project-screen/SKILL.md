@@ -66,7 +66,7 @@ class ProfileScreen extends StatelessWidget {
 import 'package:app_adaptive_widgets/app_adaptive_widgets.dart';
 import 'package:app_locale/app_locale.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app_template/destination.dart';
+import 'package:json_log_inspector/destination.dart';
 
 class ExampleScreen extends StatelessWidget {
   static const name = 'Example Screen';
@@ -134,7 +134,7 @@ static List<NavigationDestination> navs(BuildContext context) {
 import 'package:app_adaptive_widgets/app_adaptive_widgets.dart';  // Responsive layout
 import 'package:app_locale/app_locale.dart';                      // Localization
 import 'package:app_artwork/app_artwork.dart';                    // Icons, animations
-import 'package:flutter_app_template/destination.dart';           // Navigation
+import 'package:json_log_inspector/destination.dart';           // Navigation
 ```
 
 ## AppAdaptiveScaffold Features

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app_template/screens/settings/settings_screen.dart';
+import 'package:json_log_inspector/screens/settings/settings_screen.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:theme_bloc/theme_bloc.dart';

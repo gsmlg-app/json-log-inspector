@@ -111,7 +111,7 @@ MainProvider(
 
 ### Template Management
 
-Projects derived from flutter-app-template have two management scripts:
+Projects derived from json-log-inspector have two management scripts:
 
 - `dart run bin/setup_project.dart <name>` - Initial project setup (rename template, remove test_bricks)
 - `dart run bin/update_bricks.dart` - Sync bricks from upstream template (only works after setup)

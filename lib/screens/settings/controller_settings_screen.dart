@@ -1,9 +1,9 @@
 import 'package:app_adaptive_widgets/app_adaptive_widgets.dart';
 import 'package:app_locale/app_locale.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app_template/destination.dart';
-import 'package:flutter_app_template/screens/settings/controller_test_screen.dart';
-import 'package:flutter_app_template/screens/settings/settings_screen.dart';
+import 'package:json_log_inspector/destination.dart';
+import 'package:json_log_inspector/screens/settings/controller_test_screen.dart';
+import 'package:json_log_inspector/screens/settings/settings_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gamepad_bloc/gamepad_bloc.dart';
 import 'package:go_router/go_router.dart';

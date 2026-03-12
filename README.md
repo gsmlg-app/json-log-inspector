@@ -51,8 +51,8 @@ This project follows clean architecture principles with a monorepo structure man
 1.  **Clone the repository:**
 
     ```bash
-    git clone https://github.com/gsmlg-app/flutter-app-template.git
-    cd flutter-app-template
+    git clone https://github.com/gsmlg-app/json-log-inspector.git
+    cd json-log-inspector
     ```
 
 2.  **Initialize Git LFS:**
