@@ -10,9 +10,11 @@ import 'file_index_result.dart';
 class FilterEngine {
   /// Returns `true` if [record] matches all enabled [rules].
   static bool matchesFilters(LogRecord record, List<FilterRule> rules) {
-    final enabledRules = rules.where((r) => r.enabled);
+    final enabledRules = rules.where((r) => r.enabled).toList();
+    if (enabledRules.isEmpty) return true;
+
+    final json = jsonDecode(record.rawLine) as Map<String, dynamic>;
     for (final rule in enabledRules) {
-      final json = jsonDecode(record.rawLine) as Map<String, dynamic>;
       final value = getValueByPath(json, rule.keyPath);
       if (!_matchesRule(value, rule)) return false;
     }
@@ -67,37 +69,54 @@ class FilterEngine {
     List<FilterRule> rules,
     String searchQuery,
   ) {
-    final file = File(filePath);
-    final bytes = file.readAsBytesSync();
-    final hasRules = rules.any((r) => r.enabled);
+    final enabledRules = rules.where((r) => r.enabled).toList();
+    final hasRules = enabledRules.isNotEmpty;
     final hasSearch = searchQuery.isNotEmpty;
 
     if (!hasRules && !hasSearch) {
       return List.generate(index.lines.length, (i) => i);
     }
 
-    final result = <int>[];
-    for (var i = 0; i < index.lines.length; i++) {
-      final line = index.lines[i];
-      final rawLine = utf8.decode(
-        bytes.sublist(line.offset, line.offset + line.length),
-      );
+    final file = File(filePath);
+    final raf = file.openSync();
 
-      if (hasSearch && !matchesSearch(rawLine, searchQuery)) continue;
+    try {
+      final result = <int>[];
+      for (var i = 0; i < index.lines.length; i++) {
+        final line = index.lines[i];
+        raf.setPositionSync(line.offset);
+        final bytes = raf.readSync(line.length);
+        final rawLine = utf8.decode(bytes);
 
-      if (hasRules) {
-        try {
-          final json = jsonDecode(rawLine) as Map<String, dynamic>;
-          final record = LogRecord.fromJson(json, rawLine: rawLine);
-          if (!matchesFilters(record, rules)) continue;
-        } on Object {
-          continue;
+        if (hasSearch && !matchesSearch(rawLine, searchQuery)) continue;
+
+        if (hasRules) {
+          try {
+            final json = jsonDecode(rawLine) as Map<String, dynamic>;
+            if (!_matchesFiltersFromJson(json, enabledRules)) continue;
+          } on Object {
+            continue;
+          }
         }
-      }
 
-      result.add(i);
+        result.add(i);
+      }
+      return result;
+    } finally {
+      raf.closeSync();
     }
-    return result;
+  }
+
+  /// Matches filters directly from parsed JSON to avoid double-parsing.
+  static bool _matchesFiltersFromJson(
+    Map<String, dynamic> json,
+    List<FilterRule> enabledRules,
+  ) {
+    for (final rule in enabledRules) {
+      final value = getValueByPath(json, rule.keyPath);
+      if (!_matchesRule(value, rule)) return false;
+    }
+    return true;
   }
 
   static bool _matchesRule(dynamic value, FilterRule rule) {
@@ -107,30 +126,36 @@ class FilterEngine {
       case FilterOperator.equals:
         return value?.toString() == rule.value;
       case FilterOperator.notEquals:
-        return value?.toString() != rule.value;
+        if (value == null) return false;
+        return value.toString() != rule.value;
       case FilterOperator.contains:
         return value?.toString().contains(rule.value) ?? false;
       case FilterOperator.greaterThan:
-        return _compareNumeric(value, rule.value) > 0;
+        return _compareNumeric(value, rule.value, (cmp) => cmp > 0);
       case FilterOperator.lessThan:
-        return _compareNumeric(value, rule.value) < 0;
+        return _compareNumeric(value, rule.value, (cmp) => cmp < 0);
       case FilterOperator.greaterThanOrEqual:
-        return _compareNumeric(value, rule.value) >= 0;
+        return _compareNumeric(value, rule.value, (cmp) => cmp >= 0);
       case FilterOperator.lessThanOrEqual:
-        return _compareNumeric(value, rule.value) <= 0;
+        return _compareNumeric(value, rule.value, (cmp) => cmp <= 0);
       case FilterOperator.regex:
+        if (value == null) return false;
         try {
-          return RegExp(rule.value).hasMatch(value?.toString() ?? '');
+          return RegExp(rule.value).hasMatch(value.toString());
         } on FormatException {
           return false;
         }
     }
   }
 
-  static int _compareNumeric(dynamic value, String ruleValue) {
+  static bool _compareNumeric(
+    dynamic value,
+    String ruleValue,
+    bool Function(int) test,
+  ) {
     final a = double.tryParse(value?.toString() ?? '');
     final b = double.tryParse(ruleValue);
-    if (a == null || b == null) return 0;
-    return a.compareTo(b);
+    if (a == null || b == null) return false;
+    return test(a.compareTo(b));
   }
 }

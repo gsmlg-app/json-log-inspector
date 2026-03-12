@@ -111,12 +111,6 @@ class _FilterRuleBuilderState extends State<FilterRuleBuilder> {
             },
             fieldViewBuilder:
                 (context, controller, focusNode, onFieldSubmitted) {
-                  // Sync the autocomplete controller with our own.
-                  controller.text = _keyPathController.text;
-                  controller.addListener(() {
-                    _keyPathController.text = controller.text;
-                  });
-
                   return TextField(
                     controller: controller,
                     focusNode: focusNode,
@@ -129,6 +123,9 @@ class _FilterRuleBuilderState extends State<FilterRuleBuilder> {
                       fontFamily: 'monospace',
                       fontSize: 13,
                     ),
+                    onChanged: (value) {
+                      _keyPathController.text = value;
+                    },
                   );
                 },
           ),

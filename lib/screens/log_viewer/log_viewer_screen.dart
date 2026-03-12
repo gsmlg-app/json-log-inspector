@@ -212,34 +212,147 @@ class _Toolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<FilterBloc, FilterState>(
+    return BlocConsumer<FilterBloc, FilterState>(
+      listener: (context, filterState) {
+        _applyFilters(context, filterState);
+      },
       builder: (context, filterState) {
-        return FilterBar(
-          onFilterAdded: (rule) {
-            context.read<FilterBloc>().add(RuleAdded(rule));
-            _applyFilters(context);
-          },
-          onSearchChanged: (query) {
-            context.read<FilterBloc>().add(SearchChanged(query));
-            _applyFilters(context);
-          },
-          activeRules: filterState.rules,
-          onRuleToggled: (id) {
-            context.read<FilterBloc>().add(RuleToggled(id));
-            _applyFilters(context);
-          },
-          onRuleRemoved: (id) {
-            context.read<FilterBloc>().add(RuleRemoved(id));
-            _applyFilters(context);
-          },
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  // Open File button
+                  IconButton(
+                    icon: const Icon(Icons.folder_open, size: 20),
+                    tooltip: 'Open File',
+                    onPressed: () => _openFile(context),
+                  ),
+                  const SizedBox(width: 4),
+                  // Filter and search bar
+                  Expanded(
+                    child: FilterBar(
+                      onFilterAdded: (rule) {
+                        context.read<FilterBloc>().add(RuleAdded(rule));
+                      },
+                      onSearchChanged: (query) {
+                        context.read<FilterBloc>().add(SearchChanged(query));
+                      },
+                      activeRules: filterState.rules,
+                      onRuleToggled: (id) {
+                        context.read<FilterBloc>().add(RuleToggled(id));
+                      },
+                      onRuleRemoved: (id) {
+                        context.read<FilterBloc>().add(RuleRemoved(id));
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  // + Add Filter button
+                  FilledButton.tonalIcon(
+                    icon: const Icon(Icons.add, size: 18),
+                    label: const Text('Add Filter'),
+                    onPressed: () => _showFilterRuleBuilder(context),
+                  ),
+                  const SizedBox(width: 4),
+                  // Presets dropdown
+                  _PresetsDropdown(
+                    presets: filterState.presets,
+                    onPresetApplied: (preset) {
+                      context.read<FilterBloc>().add(PresetApplied(preset));
+                    },
+                    onPresetSaved: () {
+                      _showSavePresetDialog(context);
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
         );
       },
     );
   }
 
-  void _applyFilters(BuildContext context) {
+  Future<void> _openFile(BuildContext context) async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jsonl', 'json', 'log'],
+    );
+    if (result != null && result.files.single.path != null) {
+      if (context.mounted) {
+        context.read<LogFileBloc>().add(FileOpened(result.files.single.path!));
+      }
+    }
+  }
+
+  void _showFilterRuleBuilder(BuildContext context) {
+    final keyPaths = fileState.keyPaths;
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: FilterRuleBuilder(
+              availableKeyPaths: keyPaths,
+              onRuleCreated: (rule) {
+                context.read<FilterBloc>().add(RuleAdded(rule));
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showSavePresetDialog(BuildContext context) {
+    final controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Save Filter Preset'),
+          content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(
+              labelText: 'Preset Name',
+              border: OutlineInputBorder(),
+            ),
+            autofocus: true,
+            onSubmitted: (value) {
+              if (value.trim().isNotEmpty) {
+                context.read<FilterBloc>().add(PresetSaved(value.trim()));
+                Navigator.of(dialogContext).pop();
+              }
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () {
+                final name = controller.text.trim();
+                if (name.isNotEmpty) {
+                  context.read<FilterBloc>().add(PresetSaved(name));
+                  Navigator.of(dialogContext).pop();
+                }
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    ).then((_) => controller.dispose());
+  }
+
+  void _applyFilters(BuildContext context, FilterState filterState) {
     final logFileBloc = context.read<LogFileBloc>();
-    final filterBloc = context.read<FilterBloc>();
     final state = logFileBloc.state;
 
     if (state.index == null || state.filePath == null) return;
@@ -247,8 +360,8 @@ class _Toolbar extends StatelessWidget {
     FilterEngine.buildFilteredIndex(
       filePath: state.filePath!,
       index: state.index!,
-      rules: filterBloc.state.rules.where((r) => r.enabled).toList(),
-      searchQuery: filterBloc.state.searchQuery,
+      rules: filterState.rules,
+      searchQuery: filterState.searchQuery,
     ).then((filtered) {
       logFileBloc.add(FilterApplied(filtered));
     });
@@ -347,6 +460,7 @@ class _LogList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: displayIndices.length,
+      itemExtent: 36,
       itemBuilder: (context, i) {
         final lineIndex = displayIndices[i];
         return FutureBuilder<String>(
@@ -427,6 +541,62 @@ class _StatusBar extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _PresetsDropdown extends StatelessWidget {
+  const _PresetsDropdown({
+    required this.presets,
+    required this.onPresetApplied,
+    required this.onPresetSaved,
+  });
+
+  final List<FilterPreset> presets;
+  final void Function(FilterPreset preset) onPresetApplied;
+  final VoidCallback onPresetSaved;
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<Object>(
+      tooltip: 'Filter Presets',
+      icon: const Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.bookmark_border, size: 18),
+          SizedBox(width: 4),
+          Text('Presets'),
+          Icon(Icons.arrow_drop_down, size: 18),
+        ],
+      ),
+      itemBuilder: (context) {
+        return [
+          ...presets.map(
+            (preset) => PopupMenuItem<FilterPreset>(
+              value: preset,
+              child: Text(preset.name),
+            ),
+          ),
+          if (presets.isNotEmpty) const PopupMenuDivider(),
+          const PopupMenuItem<String>(
+            value: '_save',
+            child: Row(
+              children: [
+                Icon(Icons.save, size: 16),
+                SizedBox(width: 8),
+                Text('Save Current as Preset'),
+              ],
+            ),
+          ),
+        ];
+      },
+      onSelected: (value) {
+        if (value is FilterPreset) {
+          onPresetApplied(value);
+        } else if (value == '_save') {
+          onPresetSaved();
+        }
+      },
     );
   }
 }

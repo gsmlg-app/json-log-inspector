@@ -15,12 +15,12 @@ class LruCache<K, V> {
   ///
   /// Promotes the key to the most recently used position.
   V? get(K key) {
-    final value = _cache[key];
-    if (value != null) {
+    if (_cache.containsKey(key)) {
       _order.remove(key);
       _order.add(key);
+      return _cache[key];
     }
-    return value;
+    return null;
   }
 
   /// Adds or updates [key] with [value].

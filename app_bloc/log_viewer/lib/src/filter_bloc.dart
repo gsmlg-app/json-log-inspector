@@ -25,9 +25,48 @@ class FilterBloc extends Bloc<FilterEvent, FilterState> {
 
   static const _presetsKey = 'filter_presets';
 
+  static const _defaultPresets = [
+    FilterPreset(
+      name: 'Errors only',
+      rules: [
+        FilterRule(
+          id: 'preset-errors',
+          keyPath: 'response.status',
+          operator: FilterOperator.greaterThanOrEqual,
+          value: '400',
+          enabled: true,
+        ),
+      ],
+    ),
+    FilterPreset(
+      name: 'Slow requests',
+      rules: [
+        FilterRule(
+          id: 'preset-slow',
+          keyPath: 'duration_ms',
+          operator: FilterOperator.greaterThan,
+          value: '1000',
+          enabled: true,
+        ),
+      ],
+    ),
+    FilterPreset(
+      name: 'SSE streams',
+      rules: [
+        FilterRule(
+          id: 'preset-sse',
+          keyPath: 'record_type',
+          operator: FilterOperator.notEquals,
+          value: 'exchange',
+          enabled: true,
+        ),
+      ],
+    ),
+  ];
+
   static List<FilterPreset> _loadPresets(SharedPreferences prefs) {
     final json = prefs.getString(_presetsKey);
-    if (json == null) return const [];
+    if (json == null) return List.of(_defaultPresets);
     try {
       final list = jsonDecode(json) as List<dynamic>;
       return list.map((e) {
@@ -45,7 +84,7 @@ class FilterBloc extends Bloc<FilterEvent, FilterState> {
         return FilterPreset(name: map['name'] as String, rules: rules);
       }).toList();
     } on Object {
-      return const [];
+      return List.of(_defaultPresets);
     }
   }
 
