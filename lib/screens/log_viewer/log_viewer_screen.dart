@@ -485,17 +485,22 @@ class _LogListState extends State<_LogList> {
   }
 
   Future<String> _getCachedFuture(int lineIndex) {
-    return _futureCache.putIfAbsent(
-      lineIndex,
-      () => widget.entryReader.readRawLine(lineIndex),
-    );
+    return _futureCache.putIfAbsent(lineIndex, () {
+      if (_futureCache.length > 500) {
+        final keysToRemove = _futureCache.keys.take(100).toList();
+        for (final key in keysToRemove) {
+          _futureCache.remove(key);
+        }
+      }
+      return widget.entryReader.readRawLine(lineIndex);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: widget.displayIndices.length,
-      itemExtent: 36,
+      itemExtent: 48,
       itemBuilder: (context, i) {
         final lineIndex = widget.displayIndices[i];
         return FutureBuilder<String>(

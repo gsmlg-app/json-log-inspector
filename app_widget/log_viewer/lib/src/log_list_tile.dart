@@ -41,7 +41,7 @@ class LogListTile extends StatelessWidget {
       onTap: onTap,
       child: Container(
         color: backgroundColor,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         child: Row(
           children: [
             SizedBox(

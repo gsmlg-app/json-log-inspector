@@ -140,6 +140,7 @@ class FilterEngine {
         return _compareNumeric(value, rule.value, (cmp) => cmp <= 0);
       case FilterOperator.regex:
         if (value == null) return false;
+        if (rule.value.length > 1000) return false;
         try {
           return RegExp(rule.value).hasMatch(value.toString());
         } on FormatException {
