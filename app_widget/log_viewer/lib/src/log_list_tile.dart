@@ -64,6 +64,7 @@ class LogListTile extends StatelessWidget {
                   Icons.error_outline,
                   size: 16,
                   color: colorScheme.error,
+                  semanticLabel: 'Parse error',
                 ),
               ),
             Expanded(

@@ -56,6 +56,7 @@ class BodyViewer extends StatelessWidget {
                   Icons.warning_amber_rounded,
                   size: 16,
                   color: theme.colorScheme.tertiary,
+                  semanticLabel: 'Warning',
                 ),
                 const SizedBox(width: 6),
                 Text(

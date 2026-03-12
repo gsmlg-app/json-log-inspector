@@ -126,6 +126,7 @@ class _JsonNodeState extends State<_JsonNode> {
                 Icon(
                   _isExpanded ? Icons.expand_more : Icons.chevron_right,
                   size: 16,
+                  semanticLabel: _isExpanded ? 'Collapse' : 'Expand',
                 ),
                 const SizedBox(width: 4),
                 keyWidget,
@@ -207,20 +208,20 @@ class _JsonNodeState extends State<_JsonNode> {
               ),
             ),
           Expanded(
-            child: GestureDetector(
-              onTap: () {
-                Clipboard.setData(
-                  ClipboardData(text: value?.toString() ?? 'null'),
-                );
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Copied to clipboard'),
-                    duration: Duration(seconds: 1),
-                  ),
-                );
-              },
-              child: MouseRegion(
-                cursor: SystemMouseCursors.click,
+            child: Tooltip(
+              message: 'Click to copy',
+              child: InkWell(
+                onTap: () {
+                  Clipboard.setData(
+                    ClipboardData(text: value?.toString() ?? 'null'),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Copied to clipboard'),
+                      duration: Duration(seconds: 1),
+                    ),
+                  );
+                },
                 child: Text(
                   displayValue,
                   style: TextStyle(color: valueColor, fontFamily: 'monospace'),

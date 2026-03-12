@@ -265,6 +265,7 @@ class _CollapsibleSectionState extends State<_CollapsibleSection> {
                 Icon(
                   _isExpanded ? Icons.expand_more : Icons.chevron_right,
                   size: 18,
+                  semanticLabel: _isExpanded ? 'Collapse' : 'Expand',
                 ),
                 if (widget.icon != null) ...[
                   const SizedBox(width: 4),
