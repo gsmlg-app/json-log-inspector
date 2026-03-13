@@ -19,7 +19,7 @@ class AppRouter {
   static GoRouter router = GoRouter(
     navigatorKey: key,
     debugLogDiagnostics: true,
-    initialLocation: LogViewerScreen.path,
+    initialLocation: SplashScreen.path,
     routes: routes,
     errorBuilder: (context, state) {
       return ErrorScreen(routerState: state);

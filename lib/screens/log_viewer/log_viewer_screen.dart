@@ -12,7 +12,7 @@ import '../../destination.dart';
 
 class LogViewerScreen extends StatelessWidget {
   static const name = 'Log Viewer';
-  static const path = '/';
+  static const path = '/log-viewer';
 
   const LogViewerScreen({super.key});
 
