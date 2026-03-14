@@ -13,9 +13,7 @@ void main() {
               sections: [
                 SettingsSection(
                   title: const Text('iOS Section'),
-                  tiles: [
-                    SettingsTile(title: const Text('Tile')),
-                  ],
+                  tiles: [SettingsTile(title: const Text('Tile'))],
                 ),
               ],
             ),
@@ -35,9 +33,7 @@ void main() {
               sections: [
                 SettingsSection(
                   title: const Text('macOS Section'),
-                  tiles: [
-                    SettingsTile(title: const Text('Tile')),
-                  ],
+                  tiles: [SettingsTile(title: const Text('Tile'))],
                 ),
               ],
             ),
@@ -56,9 +52,7 @@ void main() {
               platform: DevicePlatform.iOS,
               sections: [
                 SettingsSection(
-                  tiles: [
-                    SettingsTile(title: const Text('Tile')),
-                  ],
+                  tiles: [SettingsTile(title: const Text('Tile'))],
                 ),
               ],
             ),

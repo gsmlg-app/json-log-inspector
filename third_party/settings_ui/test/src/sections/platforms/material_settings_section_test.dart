@@ -13,9 +13,7 @@ void main() {
               sections: [
                 SettingsSection(
                   title: const Text('Android Section'),
-                  tiles: [
-                    SettingsTile(title: const Text('Tile')),
-                  ],
+                  tiles: [SettingsTile(title: const Text('Tile'))],
                 ),
               ],
             ),
@@ -35,9 +33,7 @@ void main() {
               sections: [
                 SettingsSection(
                   title: const Text('Linux Section'),
-                  tiles: [
-                    SettingsTile(title: const Text('Tile')),
-                  ],
+                  tiles: [SettingsTile(title: const Text('Tile'))],
                 ),
               ],
             ),
@@ -57,9 +53,7 @@ void main() {
               sections: [
                 SettingsSection(
                   title: const Text('Web Section'),
-                  tiles: [
-                    SettingsTile(title: const Text('Tile')),
-                  ],
+                  tiles: [SettingsTile(title: const Text('Tile'))],
                 ),
               ],
             ),
@@ -78,9 +72,7 @@ void main() {
               platform: DevicePlatform.android,
               sections: [
                 SettingsSection(
-                  tiles: [
-                    SettingsTile(title: const Text('Direct Tile')),
-                  ],
+                  tiles: [SettingsTile(title: const Text('Direct Tile'))],
                 ),
               ],
             ),

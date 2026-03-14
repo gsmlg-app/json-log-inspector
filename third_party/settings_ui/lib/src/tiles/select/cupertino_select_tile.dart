@@ -47,23 +47,24 @@ class CupertinoSelectTile extends StatelessWidget {
     final theme = SettingsTheme.of(context);
     final textScaler = MediaQuery.of(context).textScaler;
     final labelColor = CupertinoColors.label.resolveFrom(context);
-    final secondaryLabelColor =
-        CupertinoColors.secondaryLabel.resolveFrom(context);
+    final secondaryLabelColor = CupertinoColors.secondaryLabel.resolveFrom(
+      context,
+    );
 
     final selectedOption = selectOptions?.cast<SettingsOption?>().firstWhere(
-          (o) => o?.value == selectValue,
-          orElse: () => null,
-        );
+      (o) => o?.value == selectValue,
+      orElse: () => null,
+    );
 
     Widget content = GestureDetector(
       onTap: enabled ? () => _showCupertinoSelectPicker(context) : null,
       child: Container(
-        constraints: BoxConstraints(
-          minHeight: textScaler.scale(_minRowHeight),
-        ),
-        color: theme.themeData.settingsSectionBackground ??
-            CupertinoColors.secondarySystemGroupedBackground
-                .resolveFrom(context),
+        constraints: BoxConstraints(minHeight: textScaler.scale(_minRowHeight)),
+        color:
+            theme.themeData.settingsSectionBackground ??
+            CupertinoColors.secondarySystemGroupedBackground.resolveFrom(
+              context,
+            ),
         padding: const EdgeInsetsDirectional.only(
           start: _horizontalPadding,
           end: _horizontalPadding,
@@ -80,7 +81,7 @@ class CupertinoSelectTile extends StatelessWidget {
                     color: enabled
                         ? theme.themeData.leadingIconsColor
                         : theme.themeData.inactiveTitleColor ??
-                            secondaryLabelColor,
+                              secondaryLabelColor,
                   ),
                   child: Center(child: leading!),
                 ),
@@ -92,7 +93,8 @@ class CupertinoSelectTile extends StatelessWidget {
                 style: TextStyle(
                   color: enabled
                       ? theme.themeData.settingsTileTextColor ?? labelColor
-                      : theme.themeData.inactiveTitleColor ?? secondaryLabelColor,
+                      : theme.themeData.inactiveTitleColor ??
+                            secondaryLabelColor,
                   fontSize: _titleFontSize,
                   letterSpacing: -0.4,
                 ),
@@ -160,7 +162,8 @@ class CupertinoSelectTile extends StatelessWidget {
       decoration: BoxDecoration(color: theme.themeData.settingsListBackground),
       child: DefaultTextStyle(
         style: TextStyle(
-          color: theme.themeData.titleTextColor ??
+          color:
+              theme.themeData.titleTextColor ??
               CupertinoColors.secondaryLabel.resolveFrom(context),
           fontSize: _descriptionFontSize,
         ),
@@ -173,34 +176,33 @@ class CupertinoSelectTile extends StatelessWidget {
     showCupertinoModalPopup<void>(
       context: context,
       builder: (context) => CupertinoActionSheet(
-        actions: selectOptions
-                ?.map((option) {
-                  final isSelected = option.value == selectValue;
-                  return CupertinoActionSheetAction(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      onSelectChanged?.call(option.value);
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (option.icon != null) ...[
-                          option.icon!,
-                          const SizedBox(width: 8),
-                        ],
-                        Text(option.label),
-                        if (isSelected) ...[
-                          const SizedBox(width: 8),
-                          Icon(
-                            CupertinoIcons.checkmark,
-                            color: CupertinoColors.activeBlue.resolveFrom(context),
-                          ),
-                        ],
-                      ],
-                    ),
-                  );
-                })
-                .toList() ??
+        actions:
+            selectOptions?.map((option) {
+              final isSelected = option.value == selectValue;
+              return CupertinoActionSheetAction(
+                onPressed: () {
+                  Navigator.pop(context);
+                  onSelectChanged?.call(option.value);
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (option.icon != null) ...[
+                      option.icon!,
+                      const SizedBox(width: 8),
+                    ],
+                    Text(option.label),
+                    if (isSelected) ...[
+                      const SizedBox(width: 8),
+                      Icon(
+                        CupertinoIcons.checkmark,
+                        color: CupertinoColors.activeBlue.resolveFrom(context),
+                      ),
+                    ],
+                  ],
+                ),
+              );
+            }).toList() ??
             [],
         cancelButton: CupertinoActionSheetAction(
           onPressed: () => Navigator.pop(context),

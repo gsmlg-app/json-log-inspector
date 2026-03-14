@@ -32,10 +32,7 @@ void main() {
 
     test('Cupertino design platforms', () {
       // These platforms should use Cupertino Design
-      const cupertinoPlatforms = [
-        DevicePlatform.iOS,
-        DevicePlatform.macOS,
-      ];
+      const cupertinoPlatforms = [DevicePlatform.iOS, DevicePlatform.macOS];
 
       for (final platform in cupertinoPlatforms) {
         expect(DevicePlatform.values, contains(platform));

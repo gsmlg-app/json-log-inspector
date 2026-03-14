@@ -37,45 +37,56 @@ void main() {
       expect(find.text('hello world'), findsOneWidget);
     });
 
-    testWidgets('renders JSON body as tree when content-type is application/json', (tester) async {
-      await tester.pumpWidget(buildBodyViewer(
-        body: '{"key":"value"}',
-        contentType: 'application/json',
-      ));
-      expect(find.text('Object'), findsOneWidget);
-    });
+    testWidgets(
+      'renders JSON body as tree when content-type is application/json',
+      (tester) async {
+        await tester.pumpWidget(
+          buildBodyViewer(
+            body: '{"key":"value"}',
+            contentType: 'application/json',
+          ),
+        );
+        expect(find.text('Object'), findsOneWidget);
+      },
+    );
 
-    testWidgets('falls back to text for invalid JSON with json content-type', (tester) async {
-      await tester.pumpWidget(buildBodyViewer(
-        body: 'not valid json',
-        contentType: 'application/json',
-      ));
+    testWidgets('falls back to text for invalid JSON with json content-type', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildBodyViewer(
+          body: 'not valid json',
+          contentType: 'application/json',
+        ),
+      );
       expect(find.text('not valid json'), findsOneWidget);
     });
 
     testWidgets('shows base64 placeholder', (tester) async {
-      await tester.pumpWidget(buildBodyViewer(
-        body: 'aGVsbG8=',
-        bodyEncoding: 'base64',
-      ));
+      await tester.pumpWidget(
+        buildBodyViewer(body: 'aGVsbG8=', bodyEncoding: 'base64'),
+      );
       expect(find.textContaining('base64 binary'), findsOneWidget);
     });
 
-    testWidgets('shows truncation warning when bodyTruncated is true', (tester) async {
-      await tester.pumpWidget(buildBodyViewer(
-        body: 'some data',
-        bodyTruncated: true,
-      ));
+    testWidgets('shows truncation warning when bodyTruncated is true', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildBodyViewer(body: 'some data', bodyTruncated: true),
+      );
       expect(find.text('Body was truncated'), findsOneWidget);
       expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
     });
 
-    testWidgets('does not show truncation warning when bodyTruncated is false', (tester) async {
-      await tester.pumpWidget(buildBodyViewer(
-        body: 'some data',
-        bodyTruncated: false,
-      ));
-      expect(find.text('Body was truncated'), findsNothing);
-    });
+    testWidgets(
+      'does not show truncation warning when bodyTruncated is false',
+      (tester) async {
+        await tester.pumpWidget(
+          buildBodyViewer(body: 'some data', bodyTruncated: false),
+        );
+        expect(find.text('Body was truncated'), findsNothing);
+      },
+    );
   });
 }

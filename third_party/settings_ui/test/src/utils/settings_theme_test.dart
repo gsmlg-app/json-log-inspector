@@ -105,9 +105,7 @@ void main() {
           titleTextColor: Colors.black,
         );
 
-        final copied = original.copyWith(
-          titleTextColor: Colors.red,
-        );
+        final copied = original.copyWith(titleTextColor: Colors.red);
 
         expect(copied.settingsListBackground, Colors.white);
         expect(copied.titleTextColor, Colors.red);
@@ -120,9 +118,7 @@ void main() {
           leadingIconsColor: Colors.blue,
         );
 
-        final copied = original.copyWith(
-          titleTextColor: Colors.red,
-        );
+        final copied = original.copyWith(titleTextColor: Colors.red);
 
         expect(copied.settingsListBackground, Colors.white);
         expect(copied.leadingIconsColor, Colors.blue);
@@ -162,9 +158,7 @@ void main() {
 
   group('SettingsTheme InheritedWidget', () {
     testWidgets('provides theme data to descendants', (tester) async {
-      final themeData = SettingsThemeData(
-        settingsListBackground: Colors.red,
-      );
+      final themeData = SettingsThemeData(settingsListBackground: Colors.red);
 
       late SettingsTheme capturedTheme;
 
@@ -187,7 +181,9 @@ void main() {
       expect(capturedTheme.platform, DevicePlatform.android);
     });
 
-    testWidgets('maybeOf returns null when no theme in context', (tester) async {
+    testWidgets('maybeOf returns null when no theme in context', (
+      tester,
+    ) async {
       SettingsTheme? capturedTheme;
 
       await tester.pumpWidget(

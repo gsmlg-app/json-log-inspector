@@ -5,10 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('HomeScreen', () {
     Widget buildHomeScreen({ThemeData? theme}) {
-      return MaterialApp(
-        theme: theme,
-        home: const HomeScreen(),
-      );
+      return MaterialApp(theme: theme, home: const HomeScreen());
     }
 
     testWidgets('renders correctly with basic components', (

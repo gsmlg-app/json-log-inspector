@@ -35,7 +35,9 @@ void main() {
       uri: uri,
       proto: proto,
       remoteAddr: '127.0.0.1:1234',
-      headers: const {'Content-Type': ['application/json']},
+      headers: const {
+        'Content-Type': ['application/json'],
+      },
       bodyTruncated: false,
     );
   }
@@ -43,7 +45,9 @@ void main() {
   ResponseData makeResponse({int status = 200}) {
     return ResponseData(
       status: status,
-      headers: const {'Content-Type': ['application/json']},
+      headers: const {
+        'Content-Type': ['application/json'],
+      },
       bodyTruncated: false,
     );
   }
@@ -75,7 +79,9 @@ void main() {
       expect(find.text('ID: abc-123'), findsOneWidget);
     });
 
-    testWidgets('shows request section when request data present', (tester) async {
+    testWidgets('shows request section when request data present', (
+      tester,
+    ) async {
       final record = makeRecord(
         request: makeRequest(method: 'POST', uri: '/api/messages'),
       );
@@ -94,7 +100,9 @@ void main() {
       expect(find.text('200 (42.5 ms)'), findsOneWidget);
     });
 
-    testWidgets('handles record with neither request nor response', (tester) async {
+    testWidgets('handles record with neither request nor response', (
+      tester,
+    ) async {
       final record = makeRecord();
       await tester.pumpWidget(buildDetailPanel(record));
       expect(find.text('EXCHANGE'), findsOneWidget);

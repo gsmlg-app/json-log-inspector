@@ -13,9 +13,7 @@ void main() {
               platform: DevicePlatform.iOS,
               sections: [
                 SettingsSection(
-                  tiles: [
-                    SettingsTile(title: const Text('iOS Tile')),
-                  ],
+                  tiles: [SettingsTile(title: const Text('iOS Tile'))],
                 ),
               ],
             ),
@@ -34,9 +32,7 @@ void main() {
               platform: DevicePlatform.macOS,
               sections: [
                 SettingsSection(
-                  tiles: [
-                    SettingsTile(title: const Text('macOS Tile')),
-                  ],
+                  tiles: [SettingsTile(title: const Text('macOS Tile'))],
                 ),
               ],
             ),
@@ -94,8 +90,9 @@ void main() {
         ),
       );
 
-      final switchWidget =
-          tester.widget<CupertinoSwitch>(find.byType(CupertinoSwitch));
+      final switchWidget = tester.widget<CupertinoSwitch>(
+        find.byType(CupertinoSwitch),
+      );
       expect(switchWidget.value, isTrue);
     });
 
@@ -108,9 +105,7 @@ void main() {
               sections: [
                 SettingsSection(
                   tiles: [
-                    SettingsTile.navigation(
-                      title: const Text('Navigation'),
-                    ),
+                    SettingsTile.navigation(title: const Text('Navigation')),
                   ],
                 ),
               ],

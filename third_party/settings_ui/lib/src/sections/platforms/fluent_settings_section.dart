@@ -52,7 +52,8 @@ class FluentSettingsSection extends AbstractSettingsSection {
               ),
               child: DefaultTextStyle(
                 style: TextStyle(
-                  color: theme.themeData.titleTextColor ?? colorScheme.onSurface,
+                  color:
+                      theme.themeData.titleTextColor ?? colorScheme.onSurface,
                   fontSize: _headerFontSize,
                   fontWeight: FontWeight.w600,
                 ),

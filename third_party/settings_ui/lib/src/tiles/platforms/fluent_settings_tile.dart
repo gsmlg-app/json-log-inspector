@@ -194,7 +194,9 @@ class FluentSettingsTile extends AbstractSettingsTile {
                     width: _iconContainerSize,
                     height: _iconContainerSize,
                     decoration: BoxDecoration(
-                      color: colorScheme.primaryContainer.withValues(alpha: 0.3),
+                      color: colorScheme.primaryContainer.withValues(
+                        alpha: 0.3,
+                      ),
                       borderRadius: BorderRadius.circular(_borderRadius),
                     ),
                     child: IconTheme(
@@ -202,7 +204,7 @@ class FluentSettingsTile extends AbstractSettingsTile {
                         size: _iconSize,
                         color: enabled
                             ? theme.themeData.leadingIconsColor ??
-                                colorScheme.primary
+                                  colorScheme.primary
                             : colorScheme.onSurface.withValues(alpha: 0.38),
                       ),
                       child: Center(child: leading!),
@@ -222,7 +224,7 @@ class FluentSettingsTile extends AbstractSettingsTile {
                         style: TextStyle(
                           color: enabled
                               ? theme.themeData.settingsTileTextColor ??
-                                  colorScheme.onSurface
+                                    colorScheme.onSurface
                               : colorScheme.onSurface.withValues(alpha: 0.38),
                           fontSize: _headerFontSize,
                           fontWeight: FontWeight.w600,
@@ -238,9 +240,10 @@ class FluentSettingsTile extends AbstractSettingsTile {
                             style: TextStyle(
                               color: enabled
                                   ? theme.themeData.tileDescriptionTextColor ??
-                                      colorScheme.onSurfaceVariant
-                                  : colorScheme.onSurfaceVariant
-                                      .withValues(alpha: 0.38),
+                                        colorScheme.onSurfaceVariant
+                                  : colorScheme.onSurfaceVariant.withValues(
+                                      alpha: 0.38,
+                                    ),
                               fontSize: _descriptionFontSize,
                             ),
                             child: value ?? description!,
@@ -281,5 +284,4 @@ class FluentSettingsTile extends AbstractSettingsTile {
       ),
     );
   }
-
 }

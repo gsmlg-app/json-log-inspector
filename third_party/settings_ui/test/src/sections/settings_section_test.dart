@@ -13,9 +13,7 @@ void main() {
               sections: [
                 SettingsSection(
                   title: const Text('Section Title'),
-                  tiles: [
-                    SettingsTile(title: const Text('Tile')),
-                  ],
+                  tiles: [SettingsTile(title: const Text('Tile'))],
                 ),
               ],
             ),
@@ -35,7 +33,9 @@ void main() {
               sections: [
                 SettingsSection(
                   tiles: [
-                    SettingsTile(title: const Text('Tile Without Section Title')),
+                    SettingsTile(
+                      title: const Text('Tile Without Section Title'),
+                    ),
                   ],
                 ),
               ],
@@ -81,9 +81,7 @@ void main() {
               sections: [
                 SettingsSection(
                   margin: const EdgeInsetsDirectional.all(20),
-                  tiles: [
-                    SettingsTile(title: const Text('Tile')),
-                  ],
+                  tiles: [SettingsTile(title: const Text('Tile'))],
                 ),
               ],
             ),
