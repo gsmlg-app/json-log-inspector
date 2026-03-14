@@ -72,8 +72,9 @@ void main() {
       expect(find.text('Open File'), findsOneWidget);
     });
 
-    testWidgets('shows file icon and folder icon in initial state',
-        (tester) async {
+    testWidgets('shows file icon and folder icon in initial state', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildScreen());
       await tester.pumpAndSettle();
 
@@ -86,8 +87,9 @@ void main() {
       expect(LogViewerScreen.path, equals('/'));
     });
 
-    testWidgets('creates MultiBlocProvider with all three blocs',
-        (tester) async {
+    testWidgets('creates MultiBlocProvider with all three blocs', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildScreen());
       await tester.pumpAndSettle();
 

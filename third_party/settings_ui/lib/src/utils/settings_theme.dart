@@ -69,7 +69,9 @@ class SettingsThemeData {
       tileHighlightColor: colorScheme.surfaceContainerHighest,
       leadingIconsColor: colorScheme.onSurfaceVariant,
       inactiveTitleColor: colorScheme.onSurface.withValues(alpha: 0.38),
-      inactiveSubtitleColor: colorScheme.onSurfaceVariant.withValues(alpha: 0.38),
+      inactiveSubtitleColor: colorScheme.onSurfaceVariant.withValues(
+        alpha: 0.38,
+      ),
     );
   }
 
@@ -90,7 +92,9 @@ class SettingsThemeData {
       tileHighlightColor: colorScheme.surfaceTint.withValues(alpha: 0.12),
       leadingIconsColor: colorScheme.primary,
       inactiveTitleColor: colorScheme.onSurface.withValues(alpha: 0.38),
-      inactiveSubtitleColor: colorScheme.onSurfaceVariant.withValues(alpha: 0.38),
+      inactiveSubtitleColor: colorScheme.onSurfaceVariant.withValues(
+        alpha: 0.38,
+      ),
     );
   }
 
@@ -105,7 +109,9 @@ class SettingsThemeData {
       tileHighlightColor: colorScheme.surfaceContainerHigh,
       leadingIconsColor: colorScheme.primary,
       inactiveTitleColor: colorScheme.onSurface.withValues(alpha: 0.38),
-      inactiveSubtitleColor: colorScheme.onSurfaceVariant.withValues(alpha: 0.38),
+      inactiveSubtitleColor: colorScheme.onSurfaceVariant.withValues(
+        alpha: 0.38,
+      ),
     );
   }
 

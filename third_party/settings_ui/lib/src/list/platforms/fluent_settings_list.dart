@@ -36,7 +36,8 @@ class FluentSettingsList extends AbstractSettingsList {
     final brightness = Theme.of(context).brightness;
 
     // Fluent uses subtle layer background
-    final backgroundColor = themeData.settingsListBackground ??
+    final backgroundColor =
+        themeData.settingsListBackground ??
         (brightness == Brightness.dark
             ? colorScheme.surfaceContainerLow
             : colorScheme.surface);

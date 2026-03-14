@@ -4,7 +4,9 @@ import 'package:settings_ui/settings_ui.dart';
 
 void main() {
   group('SettingsTile.textarea', () {
-    testWidgets('creates textarea tile with required properties', (tester) async {
+    testWidgets('creates textarea tile with required properties', (
+      tester,
+    ) async {
       String? capturedValue;
 
       await tester.pumpWidget(

@@ -67,7 +67,7 @@ class FluentCheckboxGroupTile extends StatelessWidget {
                       style: TextStyle(
                         color: enabled
                             ? theme.themeData.settingsTileTextColor ??
-                                colorScheme.onSurface
+                                  colorScheme.onSurface
                             : colorScheme.onSurface.withValues(alpha: 0.38),
                         fontSize: _headerFontSize,
                         fontWeight: FontWeight.w600,
@@ -84,8 +84,10 @@ class FluentCheckboxGroupTile extends StatelessWidget {
                     style: TextStyle(
                       color: enabled
                           ? theme.themeData.tileDescriptionTextColor ??
-                              colorScheme.onSurfaceVariant
-                          : colorScheme.onSurfaceVariant.withValues(alpha: 0.38),
+                                colorScheme.onSurfaceVariant
+                          : colorScheme.onSurfaceVariant.withValues(
+                              alpha: 0.38,
+                            ),
                       fontSize: _descriptionFontSize,
                     ),
                     child: description!,
@@ -93,69 +95,70 @@ class FluentCheckboxGroupTile extends StatelessWidget {
                 ),
               const SizedBox(height: 8),
               // Checkbox options with Fluent styling
-              ...?checkboxOptions?.map(
-                (option) {
-                  final isChecked =
-                      checkboxValues?.contains(option.value) ?? false;
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2),
-                    child: InkWell(
-                      onTap: enabled
-                          ? () {
-                              final newValues =
-                                  Set<String>.from(checkboxValues ?? {});
-                              if (isChecked) {
-                                newValues.remove(option.value);
-                              } else {
-                                newValues.add(option.value);
-                              }
-                              onCheckboxChanged?.call(newValues);
+              ...?checkboxOptions?.map((option) {
+                final isChecked =
+                    checkboxValues?.contains(option.value) ?? false;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: InkWell(
+                    onTap: enabled
+                        ? () {
+                            final newValues = Set<String>.from(
+                              checkboxValues ?? {},
+                            );
+                            if (isChecked) {
+                              newValues.remove(option.value);
+                            } else {
+                              newValues.add(option.value);
                             }
-                          : null,
-                      borderRadius: BorderRadius.circular(_borderRadius),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Row(
-                          children: [
-                            Checkbox(
-                              value: isChecked,
-                              onChanged: enabled
-                                  ? (checked) {
-                                      final newValues = Set<String>.from(
-                                          checkboxValues ?? {});
-                                      if (checked == true) {
-                                        newValues.add(option.value);
-                                      } else {
-                                        newValues.remove(option.value);
-                                      }
-                                      onCheckboxChanged?.call(newValues);
+                            onCheckboxChanged?.call(newValues);
+                          }
+                        : null,
+                    borderRadius: BorderRadius.circular(_borderRadius),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Row(
+                        children: [
+                          Checkbox(
+                            value: isChecked,
+                            onChanged: enabled
+                                ? (checked) {
+                                    final newValues = Set<String>.from(
+                                      checkboxValues ?? {},
+                                    );
+                                    if (checked == true) {
+                                      newValues.add(option.value);
+                                    } else {
+                                      newValues.remove(option.value);
                                     }
-                                  : null,
-                              activeColor: colorScheme.primary,
-                            ),
-                            if (option.icon != null) ...[
-                              option.icon!,
-                              const SizedBox(width: 12),
-                            ],
-                            Expanded(
-                              child: Text(
-                                option.label,
-                                style: TextStyle(
-                                  color: enabled
-                                      ? colorScheme.onSurface
-                                      : colorScheme.onSurface
-                                          .withValues(alpha: 0.38),
-                                  fontSize: _headerFontSize,
-                                ),
+                                    onCheckboxChanged?.call(newValues);
+                                  }
+                                : null,
+                            activeColor: colorScheme.primary,
+                          ),
+                          if (option.icon != null) ...[
+                            option.icon!,
+                            const SizedBox(width: 12),
+                          ],
+                          Expanded(
+                            child: Text(
+                              option.label,
+                              style: TextStyle(
+                                color: enabled
+                                    ? colorScheme.onSurface
+                                    : colorScheme.onSurface.withValues(
+                                        alpha: 0.38,
+                                      ),
+                                fontSize: _headerFontSize,
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              }),
             ],
           ),
         ),

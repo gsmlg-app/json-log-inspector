@@ -51,10 +51,7 @@ void main() {
     });
 
     test('returns true for case-insensitive match', () {
-      expect(
-        FilterEngine.matchesSearch('Hello World', 'hello'),
-        isTrue,
-      );
+      expect(FilterEngine.matchesSearch('Hello World', 'hello'), isTrue);
     });
 
     test('returns false when not found', () {
@@ -62,35 +59,28 @@ void main() {
     });
 
     test('handles special characters in raw line', () {
-      expect(
-        FilterEngine.matchesSearch('{"key":"val"}', '"key"'),
-        isTrue,
-      );
+      expect(FilterEngine.matchesSearch('{"key":"val"}', '"key"'), isTrue);
     });
   });
 
   group('FilterEngine.getValueByPath', () {
     test('returns top-level value', () {
-      expect(
-        FilterEngine.getValueByPath({'a': 1}, 'a'),
-        equals(1),
-      );
+      expect(FilterEngine.getValueByPath({'a': 1}, 'a'), equals(1));
     });
 
     test('returns nested value', () {
       expect(
         FilterEngine.getValueByPath({
-          'a': {'b': {'c': 42}},
+          'a': {
+            'b': {'c': 42},
+          },
         }, 'a.b.c'),
         equals(42),
       );
     });
 
     test('returns null for missing top-level key', () {
-      expect(
-        FilterEngine.getValueByPath({'a': 1}, 'b'),
-        isNull,
-      );
+      expect(FilterEngine.getValueByPath({'a': 1}, 'b'), isNull);
     });
 
     test('returns null for missing nested key', () {
@@ -103,25 +93,16 @@ void main() {
     });
 
     test('returns null when traversing through a non-map value', () {
-      expect(
-        FilterEngine.getValueByPath({'a': 'string'}, 'a.b'),
-        isNull,
-      );
+      expect(FilterEngine.getValueByPath({'a': 'string'}, 'a.b'), isNull);
     });
 
     test('returns the map itself for intermediate path', () {
       final inner = {'b': 1};
-      expect(
-        FilterEngine.getValueByPath({'a': inner}, 'a'),
-        equals(inner),
-      );
+      expect(FilterEngine.getValueByPath({'a': inner}, 'a'), equals(inner));
     });
 
     test('returns null value when key exists but value is null', () {
-      expect(
-        FilterEngine.getValueByPath({'a': null}, 'a'),
-        isNull,
-      );
+      expect(FilterEngine.getValueByPath({'a': null}, 'a'), isNull);
     });
   });
 
@@ -426,10 +407,7 @@ void main() {
 
     group('multiple rules', () {
       test('all rules must match (AND logic)', () {
-        final json = _minJson(
-          recordType: 'request',
-          durationMs: 100,
-        );
+        final json = _minJson(recordType: 'request', durationMs: 100);
         final record = _record(json);
         final rules = [
           _rule(value: 'request'),
@@ -444,10 +422,7 @@ void main() {
       });
 
       test('fails if any rule does not match', () {
-        final json = _minJson(
-          recordType: 'request',
-          durationMs: 10,
-        );
+        final json = _minJson(recordType: 'request', durationMs: 10);
         final record = _record(json);
         final rules = [
           _rule(value: 'request'),
@@ -465,9 +440,7 @@ void main() {
     group('disabled rules', () {
       test('disabled rules are ignored', () {
         final record = _record(_minJson(recordType: 'response'));
-        final rules = [
-          _rule(value: 'request', enabled: false),
-        ];
+        final rules = [_rule(value: 'request', enabled: false)];
         expect(FilterEngine.matchesFilters(record, rules), isTrue);
       });
 
@@ -488,16 +461,18 @@ void main() {
 
     group('nested key paths in filters', () {
       test('filters on nested key path', () {
-        final json = _minJson(extra: {
-          'request': {
-            'method': 'GET',
-            'scheme': 'https',
-            'host': 'example.com',
-            'uri': '/api',
-            'proto': 'HTTP/1.1',
-            'remote_addr': '127.0.0.1',
+        final json = _minJson(
+          extra: {
+            'request': {
+              'method': 'GET',
+              'scheme': 'https',
+              'host': 'example.com',
+              'uri': '/api',
+              'proto': 'HTTP/1.1',
+              'remote_addr': '127.0.0.1',
+            },
           },
-        });
+        );
         final record = _record(json);
         final rules = [
           _rule(

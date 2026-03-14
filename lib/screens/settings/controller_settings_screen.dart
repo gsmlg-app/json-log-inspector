@@ -42,9 +42,7 @@ class _ControllerSettingsScreenState extends State<ControllerSettingsScreen> {
         return SafeArea(
           child: CustomScrollView(
             slivers: <Widget>[
-              SliverAppBar(
-                title: Text(context.l10n.controllerSettingsTitle),
-              ),
+              SliverAppBar(title: Text(context.l10n.controllerSettingsTitle)),
               SliverFillRemaining(
                 child: BlocBuilder<GamepadBloc, GamepadState>(
                   builder: (context, state) {

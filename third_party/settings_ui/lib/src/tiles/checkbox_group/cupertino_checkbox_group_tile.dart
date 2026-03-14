@@ -44,11 +44,13 @@ class CupertinoCheckboxGroupTile extends StatelessWidget {
     final theme = SettingsTheme.of(context);
     final textScaler = MediaQuery.of(context).textScaler;
     final labelColor = CupertinoColors.label.resolveFrom(context);
-    final secondaryLabelColor =
-        CupertinoColors.secondaryLabel.resolveFrom(context);
+    final secondaryLabelColor = CupertinoColors.secondaryLabel.resolveFrom(
+      context,
+    );
 
     Widget content = Container(
-      color: theme.themeData.settingsSectionBackground ??
+      color:
+          theme.themeData.settingsSectionBackground ??
           CupertinoColors.secondarySystemGroupedBackground.resolveFrom(context),
       padding: const EdgeInsets.all(_horizontalPadding),
       child: Column(
@@ -67,7 +69,7 @@ class CupertinoCheckboxGroupTile extends StatelessWidget {
                       color: enabled
                           ? theme.themeData.leadingIconsColor
                           : theme.themeData.inactiveTitleColor ??
-                              secondaryLabelColor,
+                                secondaryLabelColor,
                     ),
                     child: Center(child: leading!),
                   ),
@@ -80,7 +82,7 @@ class CupertinoCheckboxGroupTile extends StatelessWidget {
                     color: enabled
                         ? theme.themeData.settingsTileTextColor ?? labelColor
                         : theme.themeData.inactiveTitleColor ??
-                            secondaryLabelColor,
+                              secondaryLabelColor,
                     fontSize: _titleFontSize,
                     letterSpacing: -0.4,
                   ),
@@ -91,62 +93,56 @@ class CupertinoCheckboxGroupTile extends StatelessWidget {
           ),
           SizedBox(height: textScaler.scale(8)),
           // Checkbox options (iOS style with checkmarks)
-          ...?checkboxOptions?.map(
-            (option) {
-              final isChecked =
-                  checkboxValues?.contains(option.value) ?? false;
-              return GestureDetector(
-                onTap: enabled
-                    ? () {
-                        final newValues =
-                            Set<String>.from(checkboxValues ?? {});
-                        if (isChecked) {
-                          newValues.remove(option.value);
-                        } else {
-                          newValues.add(option.value);
-                        }
-                        onCheckboxChanged?.call(newValues);
+          ...?checkboxOptions?.map((option) {
+            final isChecked = checkboxValues?.contains(option.value) ?? false;
+            return GestureDetector(
+              onTap: enabled
+                  ? () {
+                      final newValues = Set<String>.from(checkboxValues ?? {});
+                      if (isChecked) {
+                        newValues.remove(option.value);
+                      } else {
+                        newValues.add(option.value);
                       }
-                    : null,
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    vertical: textScaler.scale(11),
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: CupertinoColors.separator.resolveFrom(context),
-                        width: 0.5,
-                      ),
+                      onCheckboxChanged?.call(newValues);
+                    }
+                  : null,
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: textScaler.scale(11)),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: CupertinoColors.separator.resolveFrom(context),
+                      width: 0.5,
                     ),
                   ),
-                  child: Row(
-                    children: [
-                      if (option.icon != null) ...[
-                        option.icon!,
-                        const SizedBox(width: 12),
-                      ],
-                      Expanded(
-                        child: Text(
-                          option.label,
-                          style: TextStyle(
-                            color: enabled ? labelColor : secondaryLabelColor,
-                            fontSize: _titleFontSize,
-                          ),
+                ),
+                child: Row(
+                  children: [
+                    if (option.icon != null) ...[
+                      option.icon!,
+                      const SizedBox(width: 12),
+                    ],
+                    Expanded(
+                      child: Text(
+                        option.label,
+                        style: TextStyle(
+                          color: enabled ? labelColor : secondaryLabelColor,
+                          fontSize: _titleFontSize,
                         ),
                       ),
-                      if (isChecked)
-                        Icon(
-                          CupertinoIcons.checkmark,
-                          color: CupertinoColors.activeBlue.resolveFrom(context),
-                          size: 20,
-                        ),
-                    ],
-                  ),
+                    ),
+                    if (isChecked)
+                      Icon(
+                        CupertinoIcons.checkmark,
+                        color: CupertinoColors.activeBlue.resolveFrom(context),
+                        size: 20,
+                      ),
+                  ],
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          }),
         ],
       ),
     );
@@ -190,7 +186,8 @@ class CupertinoCheckboxGroupTile extends StatelessWidget {
       decoration: BoxDecoration(color: theme.themeData.settingsListBackground),
       child: DefaultTextStyle(
         style: TextStyle(
-          color: theme.themeData.titleTextColor ??
+          color:
+              theme.themeData.titleTextColor ??
               CupertinoColors.secondaryLabel.resolveFrom(context),
           fontSize: _descriptionFontSize,
         ),

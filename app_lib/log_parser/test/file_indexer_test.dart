@@ -112,7 +112,9 @@ void main() {
       // Verify the line lengths exclude the \r
       for (final line in result.lines) {
         final bytes = File(path).readAsBytesSync();
-        final raw = utf8.decode(bytes.sublist(line.offset, line.offset + line.length));
+        final raw = utf8.decode(
+          bytes.sublist(line.offset, line.offset + line.length),
+        );
         // Should be valid JSON without trailing \r
         expect(() => jsonDecode(raw), returnsNormally);
       }
@@ -131,7 +133,14 @@ void main() {
 
     test('discovers key paths from entries', () async {
       final lines = [
-        jsonEncode(_entry(extra: {'level': 'info', 'nested': {'a': 1}})),
+        jsonEncode(
+          _entry(
+            extra: {
+              'level': 'info',
+              'nested': {'a': 1},
+            },
+          ),
+        ),
       ];
       final path = writeTempFile(lines.join('\n'));
 
@@ -179,12 +188,16 @@ void main() {
 
       // Verify first line
       final line0 = result.lines[0];
-      final raw0 = utf8.decode(bytes.sublist(line0.offset, line0.offset + line0.length));
+      final raw0 = utf8.decode(
+        bytes.sublist(line0.offset, line0.offset + line0.length),
+      );
       expect(raw0, equals(entry1));
 
       // Verify second line
       final line1 = result.lines[1];
-      final raw1 = utf8.decode(bytes.sublist(line1.offset, line1.offset + line1.length));
+      final raw1 = utf8.decode(
+        bytes.sublist(line1.offset, line1.offset + line1.length),
+      );
       expect(raw1, equals(entry2));
     });
 
@@ -218,7 +231,9 @@ void main() {
     });
 
     test('handles UTF-8 content correctly', () async {
-      final json = _entry(extra: {'message': 'Hello \u00e9\u00e8\u00ea \u4e16\u754c'});
+      final json = _entry(
+        extra: {'message': 'Hello \u00e9\u00e8\u00ea \u4e16\u754c'},
+      );
       final path = writeTempFile(jsonEncode(json));
 
       final result = await FileIndexer.indexFile(path);
@@ -227,21 +242,29 @@ void main() {
       // The byte offset + length should recover the original line
       final bytes = File(path).readAsBytesSync();
       final line = result.lines[0];
-      final raw = utf8.decode(bytes.sublist(line.offset, line.offset + line.length));
-      final decoded = jsonDecode(raw) as Map<String, dynamic>;
-      expect(decoded['message'], equals('Hello \u00e9\u00e8\u00ea \u4e16\u754c'));
-    });
-
-    test('does not include request_id map entry for non-string request_id', () async {
-      // request_id is always a string in _entry, but let's write raw JSON
-      final path = writeTempFile(
-        '{"ts":"t","request_id":123,"record_type":"r"}',
+      final raw = utf8.decode(
+        bytes.sublist(line.offset, line.offset + line.length),
       );
-
-      final result = await FileIndexer.indexFile(path);
-
-      expect(result.validLines, equals(1));
-      expect(result.requestIdMap, isEmpty);
+      final decoded = jsonDecode(raw) as Map<String, dynamic>;
+      expect(
+        decoded['message'],
+        equals('Hello \u00e9\u00e8\u00ea \u4e16\u754c'),
+      );
     });
+
+    test(
+      'does not include request_id map entry for non-string request_id',
+      () async {
+        // request_id is always a string in _entry, but let's write raw JSON
+        final path = writeTempFile(
+          '{"ts":"t","request_id":123,"record_type":"r"}',
+        );
+
+        final result = await FileIndexer.indexFile(path);
+
+        expect(result.validLines, equals(1));
+        expect(result.requestIdMap, isEmpty);
+      },
+    );
   });
 }

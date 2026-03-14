@@ -99,10 +99,9 @@ class FileIndexer {
     lines.add(LineIndex(offset: lineStart, length: length));
 
     try {
-      final bytes =
-          rawBytes is Uint8List
-              ? rawBytes.buffer.asUint8List(rawBytes.offsetInBytes, length)
-              : Uint8List.fromList(rawBytes.sublist(0, length));
+      final bytes = rawBytes is Uint8List
+          ? rawBytes.buffer.asUint8List(rawBytes.offsetInBytes, length)
+          : Uint8List.fromList(rawBytes.sublist(0, length));
       final lineStr = utf8.decode(bytes);
       final json = jsonDecode(lineStr) as Map<String, dynamic>;
       onResult(true);

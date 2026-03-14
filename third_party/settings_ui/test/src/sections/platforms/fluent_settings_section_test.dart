@@ -13,9 +13,7 @@ void main() {
               sections: [
                 SettingsSection(
                   title: const Text('Windows Section'),
-                  tiles: [
-                    SettingsTile(title: const Text('Tile')),
-                  ],
+                  tiles: [SettingsTile(title: const Text('Tile'))],
                 ),
               ],
             ),
@@ -59,9 +57,7 @@ void main() {
               platform: DevicePlatform.windows,
               sections: [
                 SettingsSection(
-                  tiles: [
-                    SettingsTile(title: const Text('Card Tile')),
-                  ],
+                  tiles: [SettingsTile(title: const Text('Card Tile'))],
                 ),
               ],
             ),

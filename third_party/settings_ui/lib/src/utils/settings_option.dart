@@ -10,11 +10,7 @@ class SettingsOption {
   /// [value] is the unique identifier used in callbacks.
   /// [label] is the user-visible text for this option.
   /// [icon] is an optional leading icon for the option.
-  const SettingsOption({
-    required this.value,
-    required this.label,
-    this.icon,
-  });
+  const SettingsOption({required this.value, required this.label, this.icon});
 
   /// The unique value identifying this option.
   ///
