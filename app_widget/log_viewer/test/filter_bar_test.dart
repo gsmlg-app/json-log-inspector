@@ -73,7 +73,10 @@ void main() {
       await tester.pumpWidget(buildFilterBar());
 
       final filterInput = find.byType(TextField).first;
-      await tester.enterText(filterInput, 'request.uri:contains:http://example.com');
+      await tester.enterText(
+        filterInput,
+        'request.uri:contains:http://example.com',
+      );
       await tester.testTextInput.receiveAction(TextInputAction.done);
       await tester.pump();
 

@@ -37,10 +37,7 @@ class MaterialSettingsSection extends AbstractSettingsSection {
     final tileList = buildTileList();
 
     if (title == null) {
-      return Padding(
-        padding: margin ?? EdgeInsets.zero,
-        child: tileList,
-      );
+      return Padding(padding: margin ?? EdgeInsets.zero, child: tileList);
     }
 
     return Padding(

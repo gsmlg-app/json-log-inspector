@@ -18,7 +18,9 @@ void main() {
     test('discovers deeply nested keys', () {
       final paths = KeyPathDiscovery.discoverPaths({
         'a': {
-          'b': {'c': {'d': 1}},
+          'b': {
+            'c': {'d': 1},
+          },
         },
       });
       expect(paths, containsAll(['a', 'a.b', 'a.b.c', 'a.b.c.d']));
@@ -51,10 +53,7 @@ void main() {
         'bool': true,
         'null_val': null,
       });
-      expect(
-        paths,
-        equals({'list', 'string', 'number', 'bool', 'null_val'}),
-      );
+      expect(paths, equals({'list', 'string', 'number', 'bool', 'null_val'}));
     });
 
     test('handles mixed nested and flat keys', () {

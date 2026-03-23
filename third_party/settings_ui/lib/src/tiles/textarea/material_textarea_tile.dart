@@ -61,9 +61,9 @@ class MaterialTextareaTile extends StatelessWidget {
                         size: _leadingIconSize,
                         color: enabled
                             ? theme.themeData.leadingIconsColor ??
-                                colorScheme.onSurfaceVariant
+                                  colorScheme.onSurfaceVariant
                             : theme.themeData.inactiveTitleColor ??
-                                colorScheme.onSurface.withValues(alpha: 0.38),
+                                  colorScheme.onSurface.withValues(alpha: 0.38),
                       ),
                       child: leading!,
                     ),
@@ -74,9 +74,9 @@ class MaterialTextareaTile extends StatelessWidget {
                       style: TextStyle(
                         color: enabled
                             ? theme.themeData.settingsTileTextColor ??
-                                colorScheme.onSurface
+                                  colorScheme.onSurface
                             : theme.themeData.inactiveTitleColor ??
-                                colorScheme.onSurface.withValues(alpha: 0.38),
+                                  colorScheme.onSurface.withValues(alpha: 0.38),
                         fontSize: _titleFontSize,
                         fontWeight: FontWeight.w400,
                       ),
@@ -107,10 +107,11 @@ class MaterialTextareaTile extends StatelessWidget {
                     style: TextStyle(
                       color: enabled
                           ? theme.themeData.tileDescriptionTextColor ??
-                              colorScheme.onSurfaceVariant
+                                colorScheme.onSurfaceVariant
                           : theme.themeData.inactiveSubtitleColor ??
-                              colorScheme.onSurfaceVariant
-                                  .withValues(alpha: 0.38),
+                                colorScheme.onSurfaceVariant.withValues(
+                                  alpha: 0.38,
+                                ),
                       fontSize: _descriptionFontSize,
                     ),
                     child: description!,

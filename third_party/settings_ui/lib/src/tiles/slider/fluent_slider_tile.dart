@@ -70,7 +70,7 @@ class FluentSliderTile extends StatelessWidget {
                       style: TextStyle(
                         color: enabled
                             ? theme.themeData.settingsTileTextColor ??
-                                colorScheme.onSurface
+                                  colorScheme.onSurface
                             : colorScheme.onSurface.withValues(alpha: 0.38),
                         fontSize: _headerFontSize,
                         fontWeight: FontWeight.w600,
@@ -81,7 +81,8 @@ class FluentSliderTile extends StatelessWidget {
                   // Current value display
                   Text(
                     sliderValue?.toStringAsFixed(
-                            sliderDivisions != null ? 0 : 1) ??
+                          sliderDivisions != null ? 0 : 1,
+                        ) ??
                         '',
                     style: TextStyle(
                       color: enabled
@@ -117,8 +118,10 @@ class FluentSliderTile extends StatelessWidget {
                     style: TextStyle(
                       color: enabled
                           ? theme.themeData.tileDescriptionTextColor ??
-                              colorScheme.onSurfaceVariant
-                          : colorScheme.onSurfaceVariant.withValues(alpha: 0.38),
+                                colorScheme.onSurfaceVariant
+                          : colorScheme.onSurfaceVariant.withValues(
+                              alpha: 0.38,
+                            ),
                       fontSize: _descriptionFontSize,
                     ),
                     child: description!,

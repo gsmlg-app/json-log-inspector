@@ -276,7 +276,8 @@ class _CupertinoSettingsTileState extends State<CupertinoSettingsTile> {
       decoration: BoxDecoration(color: theme.themeData.settingsListBackground),
       child: DefaultTextStyle(
         style: TextStyle(
-          color: theme.themeData.titleTextColor ??
+          color:
+              theme.themeData.titleTextColor ??
               CupertinoColors.secondaryLabel.resolveFrom(context),
           fontSize: CupertinoSettingsTile._descriptionFontSize,
         ),
@@ -290,8 +291,9 @@ class _CupertinoSettingsTileState extends State<CupertinoSettingsTile> {
     required SettingsTheme theme,
   }) {
     final textScaler = MediaQuery.of(context).textScaler;
-    final secondaryLabelColor =
-        CupertinoColors.secondaryLabel.resolveFrom(context);
+    final secondaryLabelColor = CupertinoColors.secondaryLabel.resolveFrom(
+      context,
+    );
 
     return switch (widget.tileType) {
       SettingsTileType.switchTile => CupertinoSwitch(
@@ -343,8 +345,9 @@ class _CupertinoSettingsTileState extends State<CupertinoSettingsTile> {
   ) {
     final textScaler = MediaQuery.of(context).textScaler;
     final labelColor = CupertinoColors.label.resolveFrom(context);
-    final secondaryLabelColor =
-        CupertinoColors.secondaryLabel.resolveFrom(context);
+    final secondaryLabelColor = CupertinoColors.secondaryLabel.resolveFrom(
+      context,
+    );
 
     final isInteractive = widget.tileType == SettingsTileType.switchTile
         ? widget.onToggle != null || widget.onPressed != null
@@ -368,8 +371,7 @@ class _CupertinoSettingsTileState extends State<CupertinoSettingsTile> {
             },
       onTapDown: (_) =>
           isInteractive ? changePressState(isPressed: true) : null,
-      onTapUp: (_) =>
-          isInteractive ? changePressState(isPressed: false) : null,
+      onTapUp: (_) => isInteractive ? changePressState(isPressed: false) : null,
       onTapCancel: () =>
           isInteractive ? changePressState(isPressed: false) : null,
       child: Container(
@@ -378,10 +380,11 @@ class _CupertinoSettingsTileState extends State<CupertinoSettingsTile> {
         ),
         color: isPressed
             ? theme.themeData.tileHighlightColor ??
-                CupertinoColors.systemGrey4.resolveFrom(context)
+                  CupertinoColors.systemGrey4.resolveFrom(context)
             : theme.themeData.settingsSectionBackground ??
-                CupertinoColors.secondarySystemGroupedBackground
-                    .resolveFrom(context),
+                  CupertinoColors.secondarySystemGroupedBackground.resolveFrom(
+                    context,
+                  ),
         padding: EdgeInsetsDirectional.only(
           start: CupertinoSettingsTile._horizontalPadding,
         ),
@@ -403,7 +406,7 @@ class _CupertinoSettingsTileState extends State<CupertinoSettingsTile> {
                       color: widget.enabled
                           ? theme.themeData.leadingIconsColor
                           : theme.themeData.inactiveTitleColor ??
-                              secondaryLabelColor,
+                                secondaryLabelColor,
                     ),
                     child: Center(child: widget.leading!),
                   ),
@@ -422,8 +425,9 @@ class _CupertinoSettingsTileState extends State<CupertinoSettingsTile> {
                     // Main row: title + trailing
                     ConstrainedBox(
                       constraints: BoxConstraints(
-                        minHeight:
-                            textScaler.scale(CupertinoSettingsTile._minRowHeight),
+                        minHeight: textScaler.scale(
+                          CupertinoSettingsTile._minRowHeight,
+                        ),
                       ),
                       child: Row(
                         children: [
@@ -438,10 +442,11 @@ class _CupertinoSettingsTileState extends State<CupertinoSettingsTile> {
                                 style: TextStyle(
                                   color: widget.enabled
                                       ? theme.themeData.settingsTileTextColor ??
-                                          labelColor
+                                            labelColor
                                       : theme.themeData.inactiveTitleColor ??
-                                          secondaryLabelColor,
-                                  fontSize: CupertinoSettingsTile._titleFontSize,
+                                            secondaryLabelColor,
+                                  fontSize:
+                                      CupertinoSettingsTile._titleFontSize,
                                   letterSpacing: -0.4,
                                 ),
                                 child: widget.title ?? const SizedBox.shrink(),
@@ -461,7 +466,8 @@ class _CupertinoSettingsTileState extends State<CupertinoSettingsTile> {
                       Divider(
                         height: 0.5,
                         thickness: 0.5,
-                        color: theme.themeData.dividerColor ??
+                        color:
+                            theme.themeData.dividerColor ??
                             CupertinoColors.separator.resolveFrom(context),
                       ),
                   ],
@@ -473,7 +479,6 @@ class _CupertinoSettingsTileState extends State<CupertinoSettingsTile> {
       ),
     );
   }
-
 }
 
 class CupertinoSettingsTileAdditionalInfo extends InheritedWidget {
@@ -489,11 +494,14 @@ class CupertinoSettingsTileAdditionalInfo extends InheritedWidget {
   });
 
   @override
-  bool updateShouldNotify(CupertinoSettingsTileAdditionalInfo oldWidget) => true;
+  bool updateShouldNotify(CupertinoSettingsTileAdditionalInfo oldWidget) =>
+      true;
 
   static CupertinoSettingsTileAdditionalInfo of(BuildContext context) {
     final CupertinoSettingsTileAdditionalInfo? result = context
-        .dependOnInheritedWidgetOfExactType<CupertinoSettingsTileAdditionalInfo>();
+        .dependOnInheritedWidgetOfExactType<
+          CupertinoSettingsTileAdditionalInfo
+        >();
     // assert(result != null, 'No CupertinoSettingsTileAdditionalInfo found in context');
     return result ??
         CupertinoSettingsTileAdditionalInfo(

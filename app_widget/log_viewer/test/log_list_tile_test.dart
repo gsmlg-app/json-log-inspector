@@ -46,7 +46,9 @@ void main() {
       expect(find.byIcon(Icons.error_outline), findsOneWidget);
     });
 
-    testWidgets('does not show error icon when isError is false', (tester) async {
+    testWidgets('does not show error icon when isError is false', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildTile(isError: false));
       expect(find.byIcon(Icons.error_outline), findsNothing);
     });

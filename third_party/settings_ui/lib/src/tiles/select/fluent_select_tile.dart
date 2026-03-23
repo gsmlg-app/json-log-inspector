@@ -50,9 +50,9 @@ class FluentSelectTile extends StatelessWidget {
         : colorScheme.surfaceContainerLow;
 
     final selectedOption = selectOptions?.cast<SettingsOption?>().firstWhere(
-          (o) => o?.value == selectValue,
-          orElse: () => null,
-        );
+      (o) => o?.value == selectValue,
+      orElse: () => null,
+    );
 
     return IgnorePointer(
       ignoring: !enabled,
@@ -83,7 +83,7 @@ class FluentSelectTile extends StatelessWidget {
                         style: TextStyle(
                           color: enabled
                               ? theme.themeData.settingsTileTextColor ??
-                                  colorScheme.onSurface
+                                    colorScheme.onSurface
                               : colorScheme.onSurface.withValues(alpha: 0.38),
                           fontSize: _headerFontSize,
                           fontWeight: FontWeight.w600,
@@ -97,9 +97,10 @@ class FluentSelectTile extends StatelessWidget {
                             style: TextStyle(
                               color: enabled
                                   ? theme.themeData.tileDescriptionTextColor ??
-                                      colorScheme.onSurfaceVariant
-                                  : colorScheme.onSurfaceVariant
-                                      .withValues(alpha: 0.38),
+                                        colorScheme.onSurfaceVariant
+                                  : colorScheme.onSurfaceVariant.withValues(
+                                      alpha: 0.38,
+                                    ),
                               fontSize: _descriptionFontSize,
                             ),
                             child: description!,

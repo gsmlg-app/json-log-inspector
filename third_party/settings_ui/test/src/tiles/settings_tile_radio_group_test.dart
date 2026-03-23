@@ -10,7 +10,9 @@ void main() {
       const SettingsOption(value: 'fr', label: 'French'),
     ];
 
-    testWidgets('creates radio group tile with required properties', (tester) async {
+    testWidgets('creates radio group tile with required properties', (
+      tester,
+    ) async {
       String? capturedValue;
 
       await tester.pumpWidget(

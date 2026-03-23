@@ -7,14 +7,23 @@ void main() {
       expect(SettingsTileType.values.length, 10);
       expect(SettingsTileType.values, contains(SettingsTileType.simpleTile));
       expect(SettingsTileType.values, contains(SettingsTileType.switchTile));
-      expect(SettingsTileType.values, contains(SettingsTileType.navigationTile));
+      expect(
+        SettingsTileType.values,
+        contains(SettingsTileType.navigationTile),
+      );
       expect(SettingsTileType.values, contains(SettingsTileType.checkTile));
       expect(SettingsTileType.values, contains(SettingsTileType.inputTile));
       expect(SettingsTileType.values, contains(SettingsTileType.sliderTile));
       expect(SettingsTileType.values, contains(SettingsTileType.selectTile));
       expect(SettingsTileType.values, contains(SettingsTileType.textareaTile));
-      expect(SettingsTileType.values, contains(SettingsTileType.radioGroupTile));
-      expect(SettingsTileType.values, contains(SettingsTileType.checkboxGroupTile));
+      expect(
+        SettingsTileType.values,
+        contains(SettingsTileType.radioGroupTile),
+      );
+      expect(
+        SettingsTileType.values,
+        contains(SettingsTileType.checkboxGroupTile),
+      );
     });
   });
 }

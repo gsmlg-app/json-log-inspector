@@ -97,8 +97,7 @@ class _ControllerTestScreenState extends State<ControllerTestScreen>
         const Key(SettingsScreen.name),
         context,
       ),
-      onSelectedIndexChange: (idx) =>
-          Destinations.changeHandler(idx, context),
+      onSelectedIndexChange: (idx) => Destinations.changeHandler(idx, context),
       destinations: Destinations.navs(context),
       body: (context) {
         return SafeArea(
@@ -115,9 +114,7 @@ class _ControllerTestScreenState extends State<ControllerTestScreen>
 
               return CustomScrollView(
                 slivers: [
-                  SliverAppBar(
-                    title: Text(context.l10n.controllerTest),
-                  ),
+                  SliverAppBar(title: Text(context.l10n.controllerTest)),
                   SliverPadding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     sliver: SliverList(
@@ -153,16 +150,14 @@ class _ControllerTestScreenState extends State<ControllerTestScreen>
                               x: _displayState.leftStickX,
                               y: _displayState.leftStickY,
                               label: buttonLabel(ButtonId.ls, labelType),
-                              isPressed:
-                                  _displayState.isPressed(ButtonId.ls),
+                              isPressed: _displayState.isPressed(ButtonId.ls),
                               deadzone: _deadzone,
                             ),
                             StickVisualizer(
                               x: _displayState.rightStickX,
                               y: _displayState.rightStickY,
                               label: buttonLabel(ButtonId.rs, labelType),
-                              isPressed:
-                                  _displayState.isPressed(ButtonId.rs),
+                              isPressed: _displayState.isPressed(ButtonId.rs),
                               deadzone: _deadzone,
                             ),
                           ],
@@ -212,14 +207,9 @@ class _ControllerTestScreenState extends State<ControllerTestScreen>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             decoration: BoxDecoration(
-              color: Theme.of(context)
-                  .colorScheme
-                  .surface
-                  .withAlpha(200),
+              color: Theme.of(context).colorScheme.surface.withAlpha(200),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: Theme.of(context).colorScheme.outline,
-              ),
+              border: Border.all(color: Theme.of(context).colorScheme.outline),
             ),
             child: Text(
               context.l10n.noControllerDetected,
@@ -250,8 +240,7 @@ class _ControllerTestScreenState extends State<ControllerTestScreen>
             label: '${(_deadzone * 100).toInt()}%',
             onChanged: (v) {
               setState(() => _deadzone = v);
-              final newConfig =
-                  _gamepadBloc.state.config.copyWith(deadzone: v);
+              final newConfig = _gamepadBloc.state.config.copyWith(deadzone: v);
               _gamepadBloc.add(GamepadUpdateConfig(newConfig));
             },
           ),
@@ -260,9 +249,9 @@ class _ControllerTestScreenState extends State<ControllerTestScreen>
           width: 40,
           child: Text(
             '${(_deadzone * 100).toInt()}%',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              fontFamily: 'monospace',
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
           ),
         ),
       ],
@@ -284,17 +273,15 @@ class _ControllerTestScreenState extends State<ControllerTestScreen>
           child: Row(
             children: [
               Icon(
-                _showRawData
-                    ? Icons.expand_less
-                    : Icons.expand_more,
+                _showRawData ? Icons.expand_less : Icons.expand_more,
                 size: 20,
               ),
               const SizedBox(width: 8),
               Text(
                 context.l10n.showRawData,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -306,18 +293,14 @@ class _ControllerTestScreenState extends State<ControllerTestScreen>
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surfaceContainerLowest,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: Theme.of(context).colorScheme.outline,
-              ),
+              border: Border.all(color: Theme.of(context).colorScheme.outline),
             ),
             child: _rawLog.isEmpty
                 ? Center(
                     child: Text(
                       'Press buttons on your controller...',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurfaceVariant,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   )
@@ -343,13 +326,11 @@ class _ControllerTestScreenState extends State<ControllerTestScreen>
                               ),
                               child: Text(
                                 e.key,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
+                                style: Theme.of(context).textTheme.bodySmall
                                     ?.copyWith(
-                                  fontFamily: 'monospace',
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                      fontFamily: 'monospace',
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
@@ -365,9 +346,7 @@ class _ControllerTestScreenState extends State<ControllerTestScreen>
                             const SizedBox(width: 8),
                             Text(
                               e.value.toStringAsFixed(3),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
+                              style: Theme.of(context).textTheme.bodySmall
                                   ?.copyWith(fontFamily: 'monospace'),
                             ),
                           ],
@@ -405,8 +384,7 @@ class _ValueBar extends StatelessWidget {
         ),
         FractionallySizedBox(
           widthFactor: value.abs().clamp(0, 1),
-          alignment:
-              value >= 0 ? Alignment.centerLeft : Alignment.centerRight,
+          alignment: value >= 0 ? Alignment.centerLeft : Alignment.centerRight,
           child: Container(
             decoration: BoxDecoration(
               color: value.abs() > 0.5

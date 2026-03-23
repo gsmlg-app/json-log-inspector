@@ -103,11 +103,7 @@ void main() {
       );
       final (path, index) = await writeAndIndex(lines.join('\n'));
 
-      final reader = EntryReader(
-        filePath: path,
-        index: index,
-        cacheSize: 2,
-      );
+      final reader = EntryReader(filePath: path, index: index, cacheSize: 2);
 
       // Read entries 0-4 in order; only last 2 should be cached
       for (var i = 0; i < 5; i++) {

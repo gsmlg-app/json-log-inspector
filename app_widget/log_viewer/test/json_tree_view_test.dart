@@ -53,18 +53,24 @@ void main() {
     });
 
     testWidgets('expands map when initiallyExpanded is true', (tester) async {
-      await tester.pumpWidget(buildTree({'name': 'test'}, initiallyExpanded: true));
+      await tester.pumpWidget(
+        buildTree({'name': 'test'}, initiallyExpanded: true),
+      );
       expect(find.text('name: '), findsOneWidget);
       expect(find.text('"test"'), findsOneWidget);
     });
 
     testWidgets('does not show children when collapsed', (tester) async {
-      await tester.pumpWidget(buildTree({'name': 'test'}, initiallyExpanded: false));
+      await tester.pumpWidget(
+        buildTree({'name': 'test'}, initiallyExpanded: false),
+      );
       expect(find.text('"test"'), findsNothing);
     });
 
     testWidgets('toggles expand/collapse on tap', (tester) async {
-      await tester.pumpWidget(buildTree({'name': 'test'}, initiallyExpanded: false));
+      await tester.pumpWidget(
+        buildTree({'name': 'test'}, initiallyExpanded: false),
+      );
       expect(find.text('"test"'), findsNothing);
 
       await tester.tap(find.byType(InkWell).first);

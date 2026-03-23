@@ -156,10 +156,7 @@ void main() {
 
   group('SettingsOption', () {
     test('creates option with required properties', () {
-      const option = SettingsOption(
-        value: 'test_value',
-        label: 'Test Label',
-      );
+      const option = SettingsOption(value: 'test_value', label: 'Test Label');
 
       expect(option.value, 'test_value');
       expect(option.label, 'Test Label');

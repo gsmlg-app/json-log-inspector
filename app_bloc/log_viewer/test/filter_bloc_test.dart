@@ -125,9 +125,9 @@ void main() {
       });
 
       test('handles malformed JSON in SharedPreferences gracefully', () async {
-        SharedPreferences.setMockInitialValues(
-          {'filter_presets': 'not valid json'},
-        );
+        SharedPreferences.setMockInitialValues({
+          'filter_presets': 'not valid json',
+        });
         final prefs = await SharedPreferences.getInstance();
         final bloc = FilterBloc(sharedPreferences: prefs);
 
@@ -205,9 +205,7 @@ void main() {
         build: () => FilterBloc(sharedPreferences: sharedPreferences),
         seed: () => const FilterState(rules: [rule1]),
         act: (bloc) => bloc.add(const RuleRemoved('r1')),
-        expect: () => [
-          const FilterState(),
-        ],
+        expect: () => [const FilterState()],
       );
     });
 
@@ -260,11 +258,14 @@ void main() {
         },
         build: () => FilterBloc(sharedPreferences: sharedPreferences),
         seed: () => const FilterState(rules: [rule1, rule2]),
-        act: (bloc) => bloc.add(
-          RuleUpdated(rule1.copyWith(value: 'POST')),
-        ),
+        act: (bloc) => bloc.add(RuleUpdated(rule1.copyWith(value: 'POST'))),
         expect: () => [
-          FilterState(rules: [rule1.copyWith(value: 'POST'), rule2]),
+          FilterState(
+            rules: [
+              rule1.copyWith(value: 'POST'),
+              rule2,
+            ],
+          ),
         ],
       );
     });
@@ -278,10 +279,7 @@ void main() {
         build: () => FilterBloc(sharedPreferences: sharedPreferences),
         act: (bloc) => bloc.add(const SearchChanged('error')),
         expect: () => [
-          const FilterState(
-            searchQuery: 'error',
-            presets: defaultPresets,
-          ),
+          const FilterState(searchQuery: 'error', presets: defaultPresets),
         ],
       );
 
@@ -293,9 +291,7 @@ void main() {
         build: () => FilterBloc(sharedPreferences: sharedPreferences),
         seed: () => const FilterState(searchQuery: 'error'),
         act: (bloc) => bloc.add(const SearchChanged('')),
-        expect: () => [
-          const FilterState(searchQuery: ''),
-        ],
+        expect: () => [const FilterState(searchQuery: '')],
       );
 
       blocTest<FilterBloc, FilterState>(
@@ -338,9 +334,7 @@ void main() {
         act: (bloc) => bloc.add(
           const PresetApplied(FilterPreset(name: 'Empty', rules: [])),
         ),
-        expect: () => [
-          const FilterState(),
-        ],
+        expect: () => [const FilterState()],
       );
     });
 

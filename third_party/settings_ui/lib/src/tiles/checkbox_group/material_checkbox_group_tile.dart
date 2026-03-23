@@ -58,9 +58,9 @@ class MaterialCheckboxGroupTile extends StatelessWidget {
                         size: _leadingIconSize,
                         color: enabled
                             ? theme.themeData.leadingIconsColor ??
-                                colorScheme.onSurfaceVariant
+                                  colorScheme.onSurfaceVariant
                             : theme.themeData.inactiveTitleColor ??
-                                colorScheme.onSurface.withValues(alpha: 0.38),
+                                  colorScheme.onSurface.withValues(alpha: 0.38),
                       ),
                       child: leading!,
                     ),
@@ -71,9 +71,9 @@ class MaterialCheckboxGroupTile extends StatelessWidget {
                       style: TextStyle(
                         color: enabled
                             ? theme.themeData.settingsTileTextColor ??
-                                colorScheme.onSurface
+                                  colorScheme.onSurface
                             : theme.themeData.inactiveTitleColor ??
-                                colorScheme.onSurface.withValues(alpha: 0.38),
+                                  colorScheme.onSurface.withValues(alpha: 0.38),
                         fontSize: _titleFontSize,
                         fontWeight: FontWeight.w400,
                       ),
@@ -89,10 +89,11 @@ class MaterialCheckboxGroupTile extends StatelessWidget {
                     style: TextStyle(
                       color: enabled
                           ? theme.themeData.tileDescriptionTextColor ??
-                              colorScheme.onSurfaceVariant
+                                colorScheme.onSurfaceVariant
                           : theme.themeData.inactiveSubtitleColor ??
-                              colorScheme.onSurfaceVariant
-                                  .withValues(alpha: 0.38),
+                                colorScheme.onSurfaceVariant.withValues(
+                                  alpha: 0.38,
+                                ),
                       fontSize: _descriptionFontSize,
                     ),
                     child: description!,
@@ -113,8 +114,9 @@ class MaterialCheckboxGroupTile extends StatelessWidget {
                   value: checkboxValues?.contains(option.value) ?? false,
                   onChanged: enabled
                       ? (checked) {
-                          final newValues =
-                              Set<String>.from(checkboxValues ?? {});
+                          final newValues = Set<String>.from(
+                            checkboxValues ?? {},
+                          );
                           if (checked == true) {
                             newValues.add(option.value);
                           } else {

@@ -32,15 +32,18 @@ class CupertinoSettingsSection extends AbstractSettingsSection {
   Widget build(BuildContext context) {
     final theme = SettingsTheme.of(context);
     final textScaler = MediaQuery.of(context).textScaler;
-    final secondaryLabelColor =
-        CupertinoColors.secondaryLabel.resolveFrom(context);
+    final secondaryLabelColor = CupertinoColors.secondaryLabel.resolveFrom(
+      context,
+    );
 
     // Check if last tile has description (affects bottom padding)
-    final isLastNonDescriptive = tiles.last is SettingsTile &&
+    final isLastNonDescriptive =
+        tiles.last is SettingsTile &&
         (tiles.last as SettingsTile).description == null;
 
     return Padding(
-      padding: margin ??
+      padding:
+          margin ??
           EdgeInsets.only(
             top: textScaler.scale(_sectionTopPadding),
             bottom: isLastNonDescriptive

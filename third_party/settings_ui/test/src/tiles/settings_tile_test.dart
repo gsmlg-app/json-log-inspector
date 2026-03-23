@@ -13,9 +13,7 @@ void main() {
                 platform: DevicePlatform.android,
                 sections: [
                   SettingsSection(
-                    tiles: [
-                      SettingsTile(title: const Text('Simple Tile')),
-                    ],
+                    tiles: [SettingsTile(title: const Text('Simple Tile'))],
                   ),
                 ],
               ),
@@ -168,9 +166,7 @@ void main() {
                 sections: [
                   SettingsSection(
                     tiles: [
-                      SettingsTile.navigation(
-                        title: const Text('Navigation'),
-                      ),
+                      SettingsTile.navigation(title: const Text('Navigation')),
                     ],
                   ),
                 ],

@@ -10,7 +10,9 @@ void main() {
       const SettingsOption(value: 'sms', label: 'SMS'),
     ];
 
-    testWidgets('creates checkbox group tile with required properties', (tester) async {
+    testWidgets('creates checkbox group tile with required properties', (
+      tester,
+    ) async {
       Set<String>? capturedValues;
 
       await tester.pumpWidget(
@@ -66,7 +68,9 @@ void main() {
       expect(find.text('SMS'), findsOneWidget);
     });
 
-    testWidgets('creates checkbox group tile with leading icon', (tester) async {
+    testWidgets('creates checkbox group tile with leading icon', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -104,7 +108,9 @@ void main() {
                   tiles: [
                     SettingsTile.checkboxGroup(
                       title: const Text('Notifications'),
-                      description: const Text('Choose how you want to be notified'),
+                      description: const Text(
+                        'Choose how you want to be notified',
+                      ),
                       options: testOptions,
                       checkboxValues: {},
                       onCheckboxChanged: (_) {},

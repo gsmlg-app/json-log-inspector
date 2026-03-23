@@ -12,9 +12,7 @@ void main() {
               platform: DevicePlatform.android,
               sections: [
                 SettingsSection(
-                  tiles: [
-                    SettingsTile(title: const Text('Material Tile')),
-                  ],
+                  tiles: [SettingsTile(title: const Text('Material Tile'))],
                 ),
               ],
             ),
@@ -35,9 +33,7 @@ void main() {
               platform: DevicePlatform.linux,
               sections: [
                 SettingsSection(
-                  tiles: [
-                    SettingsTile(title: const Text('Linux Tile')),
-                  ],
+                  tiles: [SettingsTile(title: const Text('Linux Tile'))],
                 ),
               ],
             ),
@@ -56,9 +52,7 @@ void main() {
               platform: DevicePlatform.web,
               sections: [
                 SettingsSection(
-                  tiles: [
-                    SettingsTile(title: const Text('Web Tile')),
-                  ],
+                  tiles: [SettingsTile(title: const Text('Web Tile'))],
                 ),
               ],
             ),
@@ -77,9 +71,7 @@ void main() {
               platform: DevicePlatform.fuchsia,
               sections: [
                 SettingsSection(
-                  tiles: [
-                    SettingsTile(title: const Text('Fuchsia Tile')),
-                  ],
+                  tiles: [SettingsTile(title: const Text('Fuchsia Tile'))],
                 ),
               ],
             ),

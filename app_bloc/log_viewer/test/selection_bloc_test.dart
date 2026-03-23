@@ -35,9 +35,7 @@ void main() {
         'sets selectedIndex',
         build: SelectionBloc.new,
         act: (bloc) => bloc.add(const EntrySelected(5)),
-        expect: () => [
-          const SelectionState(selectedIndex: 5),
-        ],
+        expect: () => [const SelectionState(selectedIndex: 5)],
       );
 
       blocTest<SelectionBloc, SelectionState>(
@@ -45,9 +43,7 @@ void main() {
         build: SelectionBloc.new,
         seed: () => const SelectionState(selectedIndex: 3),
         act: (bloc) => bloc.add(const EntrySelected(7)),
-        expect: () => [
-          const SelectionState(selectedIndex: 7),
-        ],
+        expect: () => [const SelectionState(selectedIndex: 7)],
       );
 
       blocTest<SelectionBloc, SelectionState>(
@@ -63,9 +59,7 @@ void main() {
         'selecting index 0 works correctly',
         build: SelectionBloc.new,
         act: (bloc) => bloc.add(const EntrySelected(0)),
-        expect: () => [
-          const SelectionState(selectedIndex: 0),
-        ],
+        expect: () => [const SelectionState(selectedIndex: 0)],
       );
 
       blocTest<SelectionBloc, SelectionState>(
@@ -109,9 +103,7 @@ void main() {
         build: SelectionBloc.new,
         seed: () => const SelectionState(selectedIndex: 5),
         act: (bloc) => bloc.add(const SelectionCleared()),
-        expect: () => [
-          const SelectionState(),
-        ],
+        expect: () => [const SelectionState()],
       );
 
       blocTest<SelectionBloc, SelectionState>(
@@ -123,9 +115,7 @@ void main() {
           pairedRecord: pairedRecord,
         ),
         act: (bloc) => bloc.add(const SelectionCleared()),
-        expect: () => [
-          const SelectionState(),
-        ],
+        expect: () => [const SelectionState()],
       );
 
       blocTest<SelectionBloc, SelectionState>(

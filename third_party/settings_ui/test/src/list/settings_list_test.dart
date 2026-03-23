@@ -7,9 +7,7 @@ void main() {
     testWidgets('renders with empty sections', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: SettingsList(sections: []),
-          ),
+          home: Scaffold(body: SettingsList(sections: [])),
         ),
       );
 
@@ -24,9 +22,7 @@ void main() {
               sections: [
                 SettingsSection(
                   title: const Text('Section'),
-                  tiles: [
-                    SettingsTile(title: const Text('Tile')),
-                  ],
+                  tiles: [SettingsTile(title: const Text('Tile'))],
                 ),
               ],
             ),
