@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: ['**']
     paths-ignore:
       - '**.md'
       - '.claude/**'
@@ -16,7 +16,7 @@ on:
       - '.vscode/**'
       - '.idea/**'
   pull_request:
-    branches: [main]
+    branches: ['**']
     paths-ignore:
       - '**.md'
       - '.claude/**'
@@ -29,6 +29,9 @@ on:
       - 'LICENSE'
       - '.vscode/**'
       - '.idea/**'
+
+permissions:
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -86,32 +89,6 @@ jobs:
 
       - name: Run analyze
         run: melos run analyze
-
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - uses: flutter-actions/setup-flutter@v4
-
-      - name: Cache dependencies
-        uses: actions/cache@v5
-        with:
-          path: |
-            ~/.pub-cache
-            .dart_tool
-          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
-          restore-keys: ${{ runner.os }}-pub-
-
-      - name: Install tools
-        run: dart pub global activate melos
-
-      - name: Prepare project
-        run: melos run prepare
-
-      - name: Run tests
-        run: melos run test
 
   build:
     name: Build Linux

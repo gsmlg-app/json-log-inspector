@@ -3,25 +3,31 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
+      version:
+        description: 'Release version (e.g. 1.2.3)'
+        required: true
+      git_ref:
+        description: 'Git ref to release from'
+        required: true
+        default: 'main'
       platform:
         description: 'Platform to build'
         required: true
         default: 'all'
         type: choice
         options:
-          - 'android'
-          - 'ios'
-          - 'linux'
-          - 'macos'
-          - 'all'
-      build-name:
-        required: true
-        description: 'Version number (x.y.z)'
-        default: '0.1.0'
-      release-notes:
-        required: false
-        description: 'Release notes (leave empty to auto-generate from commits)'
-        default: ''
+          - android
+          - ios
+          - linux
+          - macos
+          - all
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
@@ -29,6 +35,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.git_ref }}
 
       - uses: flutter-actions/setup-flutter@v4
 
@@ -63,46 +71,30 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
+          ref: ${{ inputs.git_ref }}
           fetch-depth: 0
 
-      - name: Create tag
+      - name: Update version in pubspec.yaml
+        run: |
+          sed -i "s/^version: .*/version: ${{ inputs.version }}+1/" pubspec.yaml
+
+      - name: Commit version bump and create tag
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "v${{ inputs.build-name }}" -m "Release v${{ inputs.build-name }}"
-          git push origin "v${{ inputs.build-name }}"
-
-      - name: Generate release notes
-        id: release_notes
-        run: |
-          if [ -n "${{ inputs.release-notes }}" ]; then
-            echo "notes<<EOF" >> $GITHUB_OUTPUT
-            echo "${{ inputs.release-notes }}" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
-          else
-            # Auto-generate from recent commits
-            PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
-            if [ -n "$PREV_TAG" ]; then
-              COMMITS=$(git log ${PREV_TAG}..HEAD --pretty=format:"- %s" --no-merges)
-            else
-              COMMITS=$(git log --pretty=format:"- %s" --no-merges -10)
-            fi
-            echo "notes<<EOF" >> $GITHUB_OUTPUT
-            echo "## What's Changed" >> $GITHUB_OUTPUT
-            echo "" >> $GITHUB_OUTPUT
-            echo "$COMMITS" >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
-          fi
+          git add pubspec.yaml
+          git commit -m "chore(release): v${{ inputs.version }}"
+          git tag -a "v${{ inputs.version }}" -m "Release v${{ inputs.version }}"
+          git push origin HEAD:${{ inputs.git_ref }}
+          git push origin "v${{ inputs.version }}"
 
       - name: Create GitHub Release
         id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ inputs.build-name }}
-          release_name: Release v${{ inputs.build-name }}
-          body: ${{ steps.release_notes.outputs.notes }}
+          tag_name: v${{ inputs.version }}
+          name: Release v${{ inputs.version }}
+          generate_release_notes: true
           draft: false
           prerelease: false
 
@@ -114,7 +106,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: v${{ inputs.build-name }}
+          ref: v${{ inputs.version }}
 
       - uses: flutter-actions/setup-flutter@v4
 
@@ -140,15 +132,15 @@ jobs:
         run: melos run prepare
 
       - name: Build APK
-        run: flutter build apk --build-name=${{ inputs.build-name }} --release
+        run: flutter build apk --build-name=${{ inputs.version }} --release
 
       - name: Upload APK to Release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          tag: v${{ inputs.build-name }}
+          tag: v${{ inputs.version }}
           file: build/app/outputs/flutter-apk/app-release.apk
-          asset_name: app-${{ inputs.build-name }}-android.apk
+          asset_name: app-${{ inputs.version }}-android.apk
           overwrite: true
 
   build-ios:
@@ -159,7 +151,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: v${{ inputs.build-name }}
+          ref: v${{ inputs.version }}
 
       - uses: flutter-actions/setup-flutter@v4
 
@@ -179,7 +171,7 @@ jobs:
         run: melos run prepare
 
       - name: Build iOS (no codesign)
-        run: flutter build ios --build-name=${{ inputs.build-name }} --release --no-codesign
+        run: flutter build ios --build-name=${{ inputs.version }} --release --no-codesign
 
       - name: Create IPA
         run: |
@@ -187,15 +179,15 @@ jobs:
           cd build/ios/iphoneos
           mkdir Payload
           cp -r Runner.app Payload/
-          zip -r ../ipa/app-${{ inputs.build-name }}-ios.ipa Payload
+          zip -r ../ipa/app-${{ inputs.version }}-ios.ipa Payload
 
       - name: Upload IPA to Release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          tag: v${{ inputs.build-name }}
-          file: build/ios/ipa/app-${{ inputs.build-name }}-ios.ipa
-          asset_name: app-${{ inputs.build-name }}-ios.ipa
+          tag: v${{ inputs.version }}
+          file: build/ios/ipa/app-${{ inputs.version }}-ios.ipa
+          asset_name: app-${{ inputs.version }}-ios.ipa
           overwrite: true
 
   build-linux:
@@ -206,7 +198,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: v${{ inputs.build-name }}
+          ref: v${{ inputs.version }}
 
       - uses: flutter-actions/setup-flutter@v4
 
@@ -231,20 +223,20 @@ jobs:
         run: melos run prepare
 
       - name: Build Linux
-        run: flutter build linux --build-name=${{ inputs.build-name }} --release
+        run: flutter build linux --build-name=${{ inputs.version }} --release
 
       - name: Package Linux build
         run: |
           cd build/linux/x64/release/bundle
-          tar -czvf ../../../../../app-${{ inputs.build-name }}-linux.tar.gz .
+          tar -czvf ../../../../../app-${{ inputs.version }}-linux.tar.gz .
 
       - name: Upload Linux to Release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          tag: v${{ inputs.build-name }}
-          file: app-${{ inputs.build-name }}-linux.tar.gz
-          asset_name: app-${{ inputs.build-name }}-linux.tar.gz
+          tag: v${{ inputs.version }}
+          file: app-${{ inputs.version }}-linux.tar.gz
+          asset_name: app-${{ inputs.version }}-linux.tar.gz
           overwrite: true
 
   build-macos:
@@ -255,7 +247,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: v${{ inputs.build-name }}
+          ref: v${{ inputs.version }}
 
       - uses: flutter-actions/setup-flutter@v4
 
@@ -275,18 +267,18 @@ jobs:
         run: melos run prepare
 
       - name: Build macOS
-        run: flutter build macos --build-name=${{ inputs.build-name }} --release
+        run: flutter build macos --build-name=${{ inputs.version }} --release
 
       - name: Package macOS build
         run: |
           cd build/macos/Build/Products/Release
-          zip -r ../../../../../app-${{ inputs.build-name }}-macos.zip *.app
+          zip -r ../../../../../app-${{ inputs.version }}-macos.zip *.app
 
       - name: Upload macOS to Release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          tag: v${{ inputs.build-name }}
-          file: app-${{ inputs.build-name }}-macos.zip
-          asset_name: app-${{ inputs.build-name }}-macos.zip
+          tag: v${{ inputs.version }}
+          file: app-${{ inputs.version }}-macos.zip
+          asset_name: app-${{ inputs.version }}-macos.zip
           overwrite: true
