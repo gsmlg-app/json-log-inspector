@@ -8,7 +8,7 @@
 PRODUCT_NAME = json_log_inspector
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = app.gsmlg.flutterapptemplate
+PRODUCT_BUNDLE_IDENTIFIER = app.gsmlg.jsonloginspector
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2025 app.gsmlg. All rights reserved.

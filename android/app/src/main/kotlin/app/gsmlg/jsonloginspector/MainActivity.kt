@@ -1,4 +1,4 @@
-package app.gsmlg.flutterapptemplate
+package app.gsmlg.jsonloginspector
 
 import android.hardware.input.InputManager
 import android.os.Handler
