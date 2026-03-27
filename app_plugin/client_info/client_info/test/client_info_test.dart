@@ -9,9 +9,7 @@ class MockClientInfoPlatform extends ClientInfoPlatform {
     return {
       'platform': 'test',
       'timestamp': DateTime.now().toIso8601String(),
-      'additionalData': {
-        'test_key': 'test_value',
-      },
+      'additionalData': {'test_key': 'test_value'},
     };
   }
 
@@ -52,10 +50,7 @@ void main() {
     });
 
     test('refresh calls platform refresh', () async {
-      await expectLater(
-        clientInfo.refresh(),
-        completes,
-      );
+      await expectLater(clientInfo.refresh(), completes);
     });
 
     test('getData returns different timestamps on multiple calls', () async {
@@ -75,9 +70,7 @@ void main() {
       final map = {
         'platform': 'android',
         'timestamp': '2024-01-01T00:00:00.000Z',
-        'additionalData': {
-          'key': 'value',
-        },
+        'additionalData': {'key': 'value'},
       };
 
       final data = ClientInfoData.fromMap(map);

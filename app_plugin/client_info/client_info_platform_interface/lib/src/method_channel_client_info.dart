@@ -10,8 +10,9 @@ class MethodChannelClientInfo extends ClientInfoPlatform {
 
   @override
   Future<Map<String, dynamic>> getData() async {
-    final result =
-        await methodChannel.invokeMethod<Map<Object?, Object?>>('getData');
+    final result = await methodChannel.invokeMethod<Map<Object?, Object?>>(
+      'getData',
+    );
     if (result == null) {
       throw PlatformException(
         code: 'NULL_RESULT',
