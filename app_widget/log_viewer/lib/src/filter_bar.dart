@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:app_theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:log_models/log_models.dart';
 
@@ -26,30 +27,86 @@ class FilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Row(
-          children: [
-            Expanded(child: _FilterInput(onFilterAdded: onFilterAdded)),
-            const SizedBox(width: 8),
-            Expanded(child: _SearchInput(onSearchChanged: onSearchChanged)),
-          ],
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final compact = constraints.maxWidth < 720;
+
+            if (compact) {
+              return Column(
+                children: [
+                  _InputShell(
+                    label: 'Structured filter',
+                    child: _FilterInput(onFilterAdded: onFilterAdded),
+                  ),
+                  const SizedBox(height: 10),
+                  _InputShell(
+                    label: 'Full text search',
+                    child: _SearchInput(onSearchChanged: onSearchChanged),
+                  ),
+                ],
+              );
+            }
+
+            return Row(
+              children: [
+                Expanded(
+                  child: _InputShell(
+                    label: 'Structured filter',
+                    child: _FilterInput(onFilterAdded: onFilterAdded),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _InputShell(
+                    label: 'Full text search',
+                    child: _SearchInput(onSearchChanged: onSearchChanged),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
         if (activeRules.isNotEmpty)
           Padding(
-            padding: const EdgeInsets.only(top: 8),
+            padding: const EdgeInsets.only(top: 12),
             child: Wrap(
-              spacing: 6,
-              runSpacing: 4,
+              spacing: 8,
+              runSpacing: 8,
               children: activeRules.map((rule) {
+                final selected = rule.enabled;
+
                 return FilterChip(
+                  avatar: Icon(
+                    selected ? Icons.filter_alt : Icons.filter_alt_off_outlined,
+                    size: 16,
+                    color: selected
+                        ? colorScheme.primary
+                        : colorScheme.onSurfaceVariant,
+                  ),
                   label: Text(
                     '${rule.keyPath} ${rule.operator.name} ${rule.value}',
-                    style: const TextStyle(fontSize: 12),
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: selected
+                          ? colorScheme.onPrimaryContainer
+                          : colorScheme.onSurface,
+                    ),
                   ),
-                  selected: rule.enabled,
+                  selected: selected,
+                  showCheckmark: false,
+                  backgroundColor: colorScheme.surfaceContainerLow,
+                  selectedColor: colorScheme.primaryContainer,
+                  side: BorderSide(
+                    color: selected
+                        ? colorScheme.primary.withValues(alpha: 0.32)
+                        : colorScheme.outlineVariant,
+                  ),
                   onSelected: onRuleToggled != null
                       ? (_) => onRuleToggled!(rule.id)
                       : null,
@@ -61,6 +118,40 @@ class FilterBar extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+class _InputShell extends StatelessWidget {
+  const _InputShell({required this.label, required this.child});
+
+  final String label;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            label,
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 8),
+          child,
+        ],
+      ),
     );
   }
 }
@@ -126,20 +217,24 @@ class _FilterInputState extends State<_FilterInput> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return TextField(
       controller: _controller,
       decoration: InputDecoration(
         hintText: 'Filter: key:operator:value',
         isDense: true,
-        border: const OutlineInputBorder(),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        prefixIcon: const Icon(Icons.tune, size: 18),
         suffixIcon: IconButton(
-          icon: const Icon(Icons.add, size: 18),
+          icon: const Icon(Icons.add_circle_outline, size: 18),
           onPressed: _submitFilter,
           tooltip: 'Add filter',
         ),
       ),
-      style: const TextStyle(fontFamily: 'monospace', fontSize: 13),
+      style: theme.codeTextStyle(
+        fontSize: 13,
+        color: theme.colorScheme.onSurface,
+      ),
       onSubmitted: (_) => _submitFilter(),
     );
   }
@@ -174,18 +269,21 @@ class _SearchInputState extends State<_SearchInput> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return TextField(
       controller: _controller,
       decoration: InputDecoration(
-        hintText: 'Search...',
+        hintText: 'Search raw lines, headers, and bodies',
         isDense: true,
-        border: const OutlineInputBorder(),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         prefixIcon: const Icon(Icons.search, size: 18),
         suffixIcon: ValueListenableBuilder<TextEditingValue>(
           valueListenable: _controller,
           builder: (context, value, child) {
-            if (value.text.isEmpty) return const SizedBox.shrink();
+            if (value.text.isEmpty) {
+              return const SizedBox.shrink();
+            }
+
             return IconButton(
               icon: const Icon(Icons.clear, size: 18),
               onPressed: () {
@@ -197,7 +295,10 @@ class _SearchInputState extends State<_SearchInput> {
           },
         ),
       ),
-      style: const TextStyle(fontFamily: 'monospace', fontSize: 13),
+      style: theme.codeTextStyle(
+        fontSize: 13,
+        color: theme.colorScheme.onSurface,
+      ),
       onChanged: _onChanged,
     );
   }

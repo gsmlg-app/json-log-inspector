@@ -1,12 +1,11 @@
-import 'package:app_adaptive_widgets/app_adaptive_widgets.dart';
 import 'package:app_locale/app_locale.dart';
 import 'package:flutter/material.dart';
-import 'package:json_log_inspector/destination.dart';
-import 'package:json_log_inspector/screens/settings/controller_test_screen.dart';
-import 'package:json_log_inspector/screens/settings/settings_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gamepad_bloc/gamepad_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:json_log_inspector/screens/settings/controller_test_screen.dart';
+import 'package:json_log_inspector/screens/settings/settings_screen.dart';
+import 'package:json_log_inspector/screens/settings/widgets/settings_page_shell.dart';
 import 'package:settings_ui/settings_ui.dart';
 
 class ControllerSettingsScreen extends StatefulWidget {
@@ -31,39 +30,50 @@ class _ControllerSettingsScreenState extends State<ControllerSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return AppAdaptiveScaffold(
-      selectedIndex: Destinations.indexOf(
-        const Key(SettingsScreen.name),
-        context,
-      ),
-      onSelectedIndexChange: (idx) => Destinations.changeHandler(idx, context),
-      destinations: Destinations.navs(context),
-      body: (context) {
-        return SafeArea(
-          child: CustomScrollView(
-            slivers: <Widget>[
-              SliverAppBar(title: Text(context.l10n.controllerSettingsTitle)),
-              SliverFillRemaining(
-                child: BlocBuilder<GamepadBloc, GamepadState>(
-                  builder: (context, state) {
-                    return SettingsList(
-                      sections: [
-                        _buildEnableSection(context, state),
-                        _buildControllersSection(context, state),
-                        _buildButtonMappingSection(context, state),
-                        _buildDeadzoneSection(context, state),
-                        if (state.lastAction != null)
-                          _buildLastInputSection(context, state),
-                      ],
-                    );
-                  },
+    return DmSettingsPageShell(
+      selectedKey: const Key(SettingsScreen.name),
+      title: context.l10n.controllerSettingsTitle,
+      subtitle: 'Manage connected controllers, mappings, and analog tuning.',
+      hero: BlocBuilder<GamepadBloc, GamepadState>(
+        builder: (context, state) {
+          return DmSettingsHeroCard(
+            icon: Icons.gamepad_outlined,
+            title: 'Controller Input',
+            description:
+                'Connected devices, button mapping, analog deadzone, and test mode are all available here.',
+            footer: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                DmSettingsMetaPill(
+                  icon: Icons.usb_outlined,
+                  label: '${state.connectedControllers.length} connected',
                 ),
-              ),
+                DmSettingsMetaPill(
+                  icon: Icons.check_circle_outline,
+                  label: state.config.enabled
+                      ? 'Input enabled'
+                      : 'Input disabled',
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+      child: BlocBuilder<GamepadBloc, GamepadState>(
+        builder: (context, state) {
+          return SettingsList(
+            sections: [
+              _buildEnableSection(context, state),
+              _buildControllersSection(context, state),
+              _buildButtonMappingSection(context, state),
+              _buildDeadzoneSection(context, state),
+              if (state.lastAction != null)
+                _buildLastInputSection(context, state),
             ],
-          ),
-        );
-      },
-      smallSecondaryBody: AdaptiveScaffold.emptyBuilder,
+          );
+        },
+      ),
     );
   }
 
@@ -75,7 +85,7 @@ class _ControllerSettingsScreenState extends State<ControllerSettingsScreen> {
       title: Text(context.l10n.controllerSettings),
       tiles: <SettingsTile>[
         SettingsTile.switchTile(
-          leading: const Icon(Icons.gamepad),
+          leading: const Icon(Icons.gamepad_outlined),
           title: Text(context.l10n.controllerEnabled),
           description: Text(context.l10n.controllerEnabledDesc),
           initialValue: state.config.enabled,
@@ -112,7 +122,7 @@ class _ControllerSettingsScreenState extends State<ControllerSettingsScreen> {
               onPressed: (_) => context.goNamed(ControllerTestScreen.name),
             ),
           ),
-        SettingsTile(
+        SettingsTile.navigation(
           leading: const Icon(Icons.refresh),
           title: Text(context.l10n.refreshControllers),
           onPressed: (context) {
@@ -186,7 +196,7 @@ class _ControllerSettingsScreenState extends State<ControllerSettingsScreen> {
     required ValueChanged<GamepadButton> onChanged,
   }) {
     return SettingsTile.navigation(
-      leading: const Icon(Icons.touch_app),
+      leading: const Icon(Icons.touch_app_outlined),
       title: Text(title),
       value: Text(currentButton.displayName),
       onPressed: (context) {
@@ -243,24 +253,20 @@ class _ControllerSettingsScreenState extends State<ControllerSettingsScreen> {
     return SettingsSection(
       title: Text(context.l10n.analogDeadzone),
       tiles: <SettingsTile>[
-        SettingsTile(
+        SettingsTile.slider(
           leading: const Icon(Icons.tune),
           title: Text(context.l10n.analogDeadzone),
-          description: Text('${(state.config.deadzone * 100).toInt()}%'),
-          trailing: SizedBox(
-            width: 200,
-            child: Slider(
-              value: state.config.deadzone,
-              min: 0.0,
-              max: 0.5,
-              divisions: 10,
-              label: '${(state.config.deadzone * 100).toInt()}%',
-              onChanged: (value) {
-                final newConfig = state.config.copyWith(deadzone: value);
-                context.read<GamepadBloc>().add(GamepadUpdateConfig(newConfig));
-              },
-            ),
+          description: Text(
+            'Current: ${(state.config.deadzone * 100).toInt()}%',
           ),
+          sliderValue: state.config.deadzone,
+          sliderMin: 0.0,
+          sliderMax: 0.5,
+          sliderDivisions: 10,
+          onSliderChanged: (value) {
+            final newConfig = state.config.copyWith(deadzone: value);
+            context.read<GamepadBloc>().add(GamepadUpdateConfig(newConfig));
+          },
         ),
       ],
     );
@@ -274,7 +280,7 @@ class _ControllerSettingsScreenState extends State<ControllerSettingsScreen> {
       title: Text(context.l10n.lastInput),
       tiles: <SettingsTile>[
         SettingsTile(
-          leading: const Icon(Icons.input),
+          leading: const Icon(Icons.input_outlined),
           title: Text(state.lastAction?.name ?? 'None'),
         ),
       ],
@@ -284,9 +290,7 @@ class _ControllerSettingsScreenState extends State<ControllerSettingsScreen> {
   IconData _getControllerIcon(ControllerType type) {
     switch (type) {
       case ControllerType.xbox:
-        return Icons.sports_esports;
       case ControllerType.playstation:
-        return Icons.sports_esports;
       case ControllerType.nintendo:
         return Icons.sports_esports;
       case ControllerType.generic:

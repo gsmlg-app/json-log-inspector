@@ -52,25 +52,25 @@ void main() {
       await tester.pumpWidget(buildSettingsScreen());
 
       expect(find.byType(SettingsScreen), findsOneWidget);
-      expect(find.byType(SliverAppBar), findsOneWidget);
+      expect(find.text('Workspace Preferences'), findsOneWidget);
     });
 
     testWidgets('displays settings sections', (WidgetTester tester) async {
       await tester.pumpWidget(buildSettingsScreen());
 
-      expect(find.text('App Setting'), findsAtLeastNWidgets(1));
+      expect(find.text('App Settings'), findsOneWidget);
     });
 
     testWidgets('shows appearance option', (WidgetTester tester) async {
       await tester.pumpWidget(buildSettingsScreen());
 
-      expect(find.byIcon(Icons.brightness_medium), findsOneWidget);
+      expect(find.byIcon(Icons.brightness_medium_outlined), findsOneWidget);
     });
 
     testWidgets('shows accent color option', (WidgetTester tester) async {
       await tester.pumpWidget(buildSettingsScreen());
 
-      expect(find.byIcon(Icons.palette), findsOneWidget);
+      expect(find.byIcon(Icons.palette_outlined), findsAtLeastNWidgets(1));
     });
 
     testWidgets('app settings tile has correct icon', (
@@ -78,7 +78,7 @@ void main() {
     ) async {
       await tester.pumpWidget(buildSettingsScreen());
 
-      expect(find.byIcon(Icons.api), findsOneWidget);
+      expect(find.byIcon(Icons.apps_outlined), findsOneWidget);
     });
   });
 }

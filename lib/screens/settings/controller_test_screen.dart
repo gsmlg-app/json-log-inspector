@@ -99,8 +99,15 @@ class _ControllerTestScreenState extends State<ControllerTestScreen>
       ),
       onSelectedIndexChange: (idx) => Destinations.changeHandler(idx, context),
       destinations: Destinations.navs(context),
+      appBar: DmAppBar(
+        title: Text(context.l10n.controllerTest),
+        subtitle: 'Live input preview and raw event stream.',
+      ),
       body: (context) {
+        final theme = Theme.of(context);
+
         return SafeArea(
+          top: false,
           child: BlocBuilder<GamepadBloc, GamepadState>(
             buildWhen: (prev, curr) =>
                 prev.connectedControllers != curr.connectedControllers,
@@ -112,72 +119,132 @@ class _ControllerTestScreenState extends State<ControllerTestScreen>
                   ? ControllerType.playstation
                   : ControllerType.xbox;
 
-              return CustomScrollView(
-                slivers: [
-                  SliverAppBar(title: Text(context.l10n.controllerTest)),
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    sliver: SliverList(
-                      delegate: SliverChildListDelegate([
-                        const SizedBox(height: 8),
-                        // ── Controller Schematic ──
-                        _buildSchematic(hasController, isPS),
-
-                        const SizedBox(height: 16),
-
-                        // ── Triggers ──
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            TriggerBar(
-                              value: _displayState.leftTrigger,
-                              label: buttonLabel(ButtonId.lt, labelType),
-                            ),
-                            TriggerBar(
-                              value: _displayState.rightTrigger,
-                              label: buttonLabel(ButtonId.rt, labelType),
-                            ),
-                          ],
+              return Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      theme.colorScheme.primaryContainer.withValues(
+                        alpha: 0.18,
+                      ),
+                      theme.colorScheme.secondaryContainer.withValues(
+                        alpha: 0.10,
+                      ),
+                      theme.colorScheme.surface,
+                    ],
+                  ),
+                ),
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 980),
+                    child: CustomScrollView(
+                      slivers: [
+                        SliverPadding(
+                          padding: const EdgeInsets.all(16),
+                          sliver: SliverList(
+                            delegate: SliverChildListDelegate([
+                              DmCard(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Controller Schematic',
+                                      style: theme.textTheme.titleMedium,
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      'Track live button, trigger, and stick states against a console-style controller layout.',
+                                      style: theme.textTheme.bodySmall
+                                          ?.copyWith(
+                                            color: theme
+                                                .colorScheme
+                                                .onSurfaceVariant,
+                                          ),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    _buildSchematic(hasController, isPS),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              DmCard(
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Text(
+                                      'Analog Input',
+                                      style: theme.textTheme.titleMedium,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        TriggerBar(
+                                          value: _displayState.leftTrigger,
+                                          label: buttonLabel(
+                                            ButtonId.lt,
+                                            labelType,
+                                          ),
+                                        ),
+                                        TriggerBar(
+                                          value: _displayState.rightTrigger,
+                                          label: buttonLabel(
+                                            ButtonId.rt,
+                                            labelType,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        StickVisualizer(
+                                          x: _displayState.leftStickX,
+                                          y: _displayState.leftStickY,
+                                          label: buttonLabel(
+                                            ButtonId.ls,
+                                            labelType,
+                                          ),
+                                          isPressed: _displayState.isPressed(
+                                            ButtonId.ls,
+                                          ),
+                                          deadzone: _deadzone,
+                                        ),
+                                        StickVisualizer(
+                                          x: _displayState.rightStickX,
+                                          y: _displayState.rightStickY,
+                                          label: buttonLabel(
+                                            ButtonId.rs,
+                                            labelType,
+                                          ),
+                                          isPressed: _displayState.isPressed(
+                                            ButtonId.rs,
+                                          ),
+                                          deadzone: _deadzone,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              DmCard(child: _buildDeadzoneSlider()),
+                              const SizedBox(height: 16),
+                              DmCard(child: _buildRawDataSection()),
+                              const SizedBox(height: 16),
+                            ]),
+                          ),
                         ),
-
-                        const SizedBox(height: 16),
-
-                        // ── Sticks ──
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            StickVisualizer(
-                              x: _displayState.leftStickX,
-                              y: _displayState.leftStickY,
-                              label: buttonLabel(ButtonId.ls, labelType),
-                              isPressed: _displayState.isPressed(ButtonId.ls),
-                              deadzone: _deadzone,
-                            ),
-                            StickVisualizer(
-                              x: _displayState.rightStickX,
-                              y: _displayState.rightStickY,
-                              label: buttonLabel(ButtonId.rs, labelType),
-                              isPressed: _displayState.isPressed(ButtonId.rs),
-                              deadzone: _deadzone,
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 24),
-
-                        // ── Deadzone Slider ──
-                        _buildDeadzoneSlider(),
-
-                        const Divider(height: 32),
-
-                        // ── Raw Data Toggle ──
-                        _buildRawDataSection(),
-
-                        const SizedBox(height: 16),
-                      ]),
+                      ],
                     ),
                   ),
-                ],
+                ),
               );
             },
           ),

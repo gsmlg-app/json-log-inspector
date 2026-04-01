@@ -2,8 +2,12 @@ import 'package:app_theme/app_theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('adds one to input values', () {
-    final theme = VioletTheme();
-    expect(theme.name, 'Violet');
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  test('provides duskmoon-derived theme options', () {
+    expect(
+      themeList.map((theme) => theme.name),
+      containsAll(<String>['Orbit', 'Solar', 'Tide', 'Aurora']),
+    );
   });
 }

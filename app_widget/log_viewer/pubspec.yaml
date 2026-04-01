@@ -10,6 +10,7 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
+  app_theme: any
   log_models: any
 
 dev_dependencies:

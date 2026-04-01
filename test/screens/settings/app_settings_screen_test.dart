@@ -40,7 +40,7 @@ void main() {
       );
 
       expect(find.byType(AppSettingsScreen), findsOneWidget);
-      expect(find.byType(SliverAppBar), findsOneWidget);
+      expect(find.text('Application Metadata'), findsOneWidget);
     });
 
     testWidgets('displays APP_NAME section', (WidgetTester tester) async {
@@ -182,7 +182,7 @@ void main() {
         ),
       );
 
-      expect(find.byIcon(Icons.api), findsOneWidget);
+      expect(find.byIcon(Icons.api_outlined), findsOneWidget);
     });
 
     testWidgets('handles empty SharedPreferences correctly', (

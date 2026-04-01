@@ -22,7 +22,7 @@ class CupertinoSettingsSection extends AbstractSettingsSection {
 
   // Apple HIG specifications
   static const double _horizontalMargin = 16.0;
-  static const double _cornerRadius = 10.0;
+  static const double _cornerRadius = 18.0;
   static const double _headerFontSize = 13.0;
   static const double _headerBottomPadding = 6.0;
   static const double _sectionTopPadding = 22.0;
@@ -66,7 +66,7 @@ class CupertinoSettingsSection extends AbstractSettingsSection {
                 style: TextStyle(
                   color: theme.themeData.titleTextColor ?? secondaryLabelColor,
                   fontSize: _headerFontSize,
-                  fontWeight: FontWeight.w400,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: -0.08,
                 ),
                 child: title!,
@@ -74,9 +74,19 @@ class CupertinoSettingsSection extends AbstractSettingsSection {
             ),
 
           // Tile list with rounded container
-          ClipRRect(
-            borderRadius: BorderRadius.circular(_cornerRadius),
-            child: buildTileList(),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color:
+                  theme.themeData.settingsSectionBackground ??
+                  CupertinoColors.secondarySystemGroupedBackground.resolveFrom(
+                    context,
+                  ),
+              borderRadius: BorderRadius.circular(_cornerRadius),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(_cornerRadius),
+              child: buildTileList(),
+            ),
           ),
         ],
       ),

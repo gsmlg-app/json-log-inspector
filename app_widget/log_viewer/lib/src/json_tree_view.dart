@@ -1,3 +1,4 @@
+import 'package:app_theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -57,12 +58,14 @@ class _JsonNodeState extends State<_JsonNode> {
   @override
   Widget build(BuildContext context) {
     final value = widget.value;
+    final statusColors = Theme.of(context).statusColors;
 
     if (value is Map) {
       return _buildCollapsibleNode(
         context,
         typeLabel: 'Object',
-        typeColor: Colors.orange,
+        badgeColor: statusColors.warningContainer,
+        labelColor: statusColors.onWarningContainer,
         preview: '{${value.length}}',
         children: value.entries
             .map(
@@ -80,7 +83,8 @@ class _JsonNodeState extends State<_JsonNode> {
       return _buildCollapsibleNode(
         context,
         typeLabel: 'Array',
-        typeColor: Colors.blue,
+        badgeColor: statusColors.infoContainer,
+        labelColor: statusColors.onInfoContainer,
         preview: '[${value.length}]',
         children: List.generate(
           value.length,
@@ -99,17 +103,20 @@ class _JsonNodeState extends State<_JsonNode> {
   Widget _buildCollapsibleNode(
     BuildContext context, {
     required String typeLabel,
-    required Color typeColor,
+    required Color badgeColor,
+    required Color labelColor,
     required String preview,
     required List<Widget> children,
   }) {
     final theme = Theme.of(context);
     final keyWidget = widget.keyName != null
-        ? Text(
-            '${widget.keyName}: ',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: theme.colorScheme.onSurface,
+        ? Padding(
+            padding: const EdgeInsets.only(right: 6),
+            child: Text(
+              '${widget.keyName}: ',
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: theme.colorScheme.onSurface,
+              ),
             ),
           )
         : const SizedBox.shrink();
@@ -119,41 +126,41 @@ class _JsonNodeState extends State<_JsonNode> {
       children: [
         InkWell(
           onTap: () => setState(() => _isExpanded = !_isExpanded),
+          borderRadius: BorderRadius.circular(12),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
             child: Row(
               children: [
                 Icon(
                   _isExpanded ? Icons.expand_more : Icons.chevron_right,
-                  size: 16,
+                  size: 18,
+                  color: theme.colorScheme.onSurfaceVariant,
                   semanticLabel: _isExpanded ? 'Collapse' : 'Expand',
                 ),
                 const SizedBox(width: 4),
                 keyWidget,
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 4,
-                    vertical: 1,
+                    horizontal: 8,
+                    vertical: 3,
                   ),
                   decoration: BoxDecoration(
-                    color: typeColor.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(4),
+                    color: badgeColor,
+                    borderRadius: BorderRadius.circular(999),
                   ),
                   child: Text(
                     typeLabel,
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: typeColor,
-                      fontWeight: FontWeight.w500,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: labelColor,
                     ),
                   ),
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: 8),
                 Text(
                   preview,
-                  style: TextStyle(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                  style: theme.codeTextStyle(
                     fontSize: 12,
+                    color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -175,6 +182,7 @@ class _JsonNodeState extends State<_JsonNode> {
   Widget _buildLeafNode(BuildContext context, dynamic value) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final statusColors = theme.statusColors;
 
     final Color valueColor;
     final String displayValue;
@@ -186,10 +194,10 @@ class _JsonNodeState extends State<_JsonNode> {
       valueColor = colorScheme.tertiary;
       displayValue = value.toString();
     } else if (value is bool) {
-      valueColor = colorScheme.secondary;
+      valueColor = statusColors.success;
       displayValue = value.toString();
     } else {
-      valueColor = Colors.grey;
+      valueColor = colorScheme.onSurfaceVariant;
       displayValue = 'null';
     }
 
@@ -200,17 +208,20 @@ class _JsonNodeState extends State<_JsonNode> {
         children: [
           const SizedBox(width: 20),
           if (widget.keyName != null)
-            Text(
-              '${widget.keyName}: ',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: colorScheme.onSurface,
+            Padding(
+              padding: const EdgeInsets.only(right: 6),
+              child: Text(
+                '${widget.keyName}: ',
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: colorScheme.onSurface,
+                ),
               ),
             ),
           Expanded(
             child: Tooltip(
               message: 'Click to copy',
               child: InkWell(
+                borderRadius: BorderRadius.circular(8),
                 onTap: () {
                   Clipboard.setData(
                     ClipboardData(text: value?.toString() ?? 'null'),
@@ -222,9 +233,18 @@ class _JsonNodeState extends State<_JsonNode> {
                     ),
                   );
                 },
-                child: Text(
-                  displayValue,
-                  style: TextStyle(color: valueColor, fontFamily: 'monospace'),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: 2,
+                  ),
+                  child: Text(
+                    displayValue,
+                    style: theme.codeTextStyle(
+                      fontSize: 12.5,
+                      color: valueColor,
+                    ),
+                  ),
                 ),
               ),
             ),

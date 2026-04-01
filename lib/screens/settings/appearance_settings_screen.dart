@@ -1,10 +1,10 @@
 import 'package:app_adaptive_widgets/app_adaptive_widgets.dart';
 import 'package:app_locale/app_locale.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:app_theme/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:json_log_inspector/destination.dart';
-import 'package:json_log_inspector/screens/settings/settings_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:json_log_inspector/screens/settings/settings_screen.dart';
+import 'package:json_log_inspector/screens/settings/widgets/settings_page_shell.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:theme_bloc/theme_bloc.dart';
 
@@ -16,54 +16,62 @@ class AppearanceSettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppAdaptiveScaffold(
-      selectedIndex: Destinations.indexOf(
-        const Key(SettingsScreen.name),
-        context,
-      ),
-      onSelectedIndexChange: (idx) => Destinations.changeHandler(idx, context),
-      destinations: Destinations.navs(context),
-      body: (context) {
-        final themeBloc = context.read<ThemeBloc>();
+    final themeBloc = context.read<ThemeBloc>();
 
-        return SafeArea(
-          child: CustomScrollView(
-            slivers: <Widget>[
-              SliverAppBar(title: Text(context.l10n.appearance)),
-              SliverFillRemaining(
-                child: BlocBuilder<ThemeBloc, ThemeState>(
-                  bloc: themeBloc,
-                  builder: (context, state) {
-                    return SettingsList(
-                      sections: [
-                        SettingsSection(
-                          title: Text(context.l10n.appearance),
-                          tiles: <AbstractSettingsTile>[
-                            CustomSettingsTile(
-                              child: _AppearancePicker(
-                                currentMode: state.themeMode,
-                                onModeChanged: (mode) {
-                                  themeBloc.add(ChangeThemeMode(mode));
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
-                  },
+    return DmSettingsPageShell(
+      selectedKey: const Key(SettingsScreen.name),
+      title: context.l10n.appearance,
+      subtitle: 'Choose how the interface responds to light and dark modes.',
+      hero: BlocBuilder<ThemeBloc, ThemeState>(
+        bloc: themeBloc,
+        builder: (context, state) {
+          return DmSettingsHeroCard(
+            icon: Icons.brightness_6_outlined,
+            title: 'Theme Mode',
+            description:
+                'Switch between light, dark, or system-following behavior with live previews.',
+            footer: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                DmSettingsMetaPill(
+                  icon: state.themeMode.iconOutlined is Icon
+                      ? (state.themeMode.iconOutlined as Icon).icon ??
+                            Icons.brightness_auto_outlined
+                      : Icons.brightness_auto_outlined,
+                  label: state.themeMode.title,
                 ),
+              ],
+            ),
+          );
+        },
+      ),
+      child: BlocBuilder<ThemeBloc, ThemeState>(
+        bloc: themeBloc,
+        builder: (context, state) {
+          return SettingsList(
+            sections: [
+              SettingsSection(
+                title: Text(context.l10n.appearance),
+                tiles: <AbstractSettingsTile>[
+                  CustomSettingsTile(
+                    child: _AppearancePicker(
+                      currentMode: state.themeMode,
+                      onModeChanged: (mode) {
+                        themeBloc.add(ChangeThemeMode(mode));
+                      },
+                    ),
+                  ),
+                ],
               ),
             ],
-          ),
-        );
-      },
-      smallSecondaryBody: AdaptiveScaffold.emptyBuilder,
+          );
+        },
+      ),
     );
   }
 }
 
-/// A horizontal appearance mode picker with visual previews.
 class _AppearancePicker extends StatelessWidget {
   const _AppearancePicker({
     required this.currentMode,
@@ -75,157 +83,63 @@ class _AppearancePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final labelColor = isDark ? CupertinoColors.white : CupertinoColors.black;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final compact = constraints.maxWidth < 720;
+        final children = [
           _AppearanceOption(
             label: context.l10n.lightTheme,
             isSelected: currentMode == ThemeMode.light,
             onTap: () => onModeChanged(ThemeMode.light),
-            preview: _buildPreview(context, Brightness.light),
-            labelColor: labelColor,
+            preview: _ModePreview(
+              left: _MiniWindow(brightness: Brightness.light),
+            ),
           ),
-          const SizedBox(width: 16),
           _AppearanceOption(
             label: context.l10n.darkTheme,
             isSelected: currentMode == ThemeMode.dark,
             onTap: () => onModeChanged(ThemeMode.dark),
-            preview: _buildPreview(context, Brightness.dark),
-            labelColor: labelColor,
+            preview: _ModePreview(
+              left: _MiniWindow(brightness: Brightness.dark),
+            ),
           ),
-          const SizedBox(width: 16),
           _AppearanceOption(
             label: context.l10n.systemTheme,
             isSelected: currentMode == ThemeMode.system,
             onTap: () => onModeChanged(ThemeMode.system),
-            preview: _buildAutoPreview(context),
-            labelColor: labelColor,
+            preview: _ModePreview(
+              left: _MiniWindow(brightness: Brightness.light),
+              right: _MiniWindow(brightness: Brightness.dark),
+            ),
           ),
-        ],
-      ),
-    );
-  }
+        ];
 
-  Widget _buildPreview(BuildContext context, Brightness brightness) {
-    final isLight = brightness == Brightness.light;
-    final bgColor = isLight ? const Color(0xFFE8E8ED) : const Color(0xFF2D2D2D);
-    final windowBg = isLight ? Colors.white : const Color(0xFF1E1E1E);
-    final titleBarColor = isLight
-        ? const Color(0xFFF0F0F0)
-        : const Color(0xFF3A3A3A);
-    final sidebarColor = isLight
-        ? const Color(0xFFF5F5F7)
-        : const Color(0xFF2A2A2A);
-    final accentColor = CupertinoColors.activeBlue;
-
-    return Container(
-      width: 80,
-      height: 56,
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(6),
-      ),
-      padding: const EdgeInsets.all(4),
-      child: Container(
-        decoration: BoxDecoration(
-          color: windowBg,
-          borderRadius: BorderRadius.circular(4),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.15),
-              blurRadius: 2,
-              offset: const Offset(0, 1),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            // Title bar with traffic lights
-            Container(
-              height: 10,
-              decoration: BoxDecoration(
-                color: titleBarColor,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(4),
-                ),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 3),
-              child: Row(
-                children: [
-                  _trafficLight(const Color(0xFFFF5F57)),
-                  const SizedBox(width: 2),
-                  _trafficLight(const Color(0xFFFFBD2E)),
-                  const SizedBox(width: 2),
-                  _trafficLight(const Color(0xFF28CA41)),
+        if (compact) {
+          return Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              children: [
+                for (var i = 0; i < children.length; i++) ...[
+                  children[i],
+                  if (i != children.length - 1) const SizedBox(height: 12),
                 ],
-              ),
+              ],
             ),
-            // Content area with sidebar
-            Expanded(
-              child: Row(
-                children: [
-                  Container(
-                    width: 18,
-                    color: sidebarColor,
-                    padding: const EdgeInsets.all(2),
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 4,
-                          decoration: BoxDecoration(
-                            color: accentColor,
-                            borderRadius: BorderRadius.circular(1),
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Container(
-                          height: 3,
-                          decoration: BoxDecoration(
-                            color: isLight
-                                ? Colors.grey.shade300
-                                : Colors.grey.shade700,
-                            borderRadius: BorderRadius.circular(1),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(child: Container(color: windowBg)),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+          );
+        }
 
-  Widget _buildAutoPreview(BuildContext context) {
-    // Split preview showing both light and dark
-    return Container(
-      width: 80,
-      height: 56,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(6)),
-      clipBehavior: Clip.antiAlias,
-      child: Row(
-        children: [
-          Expanded(child: _buildPreview(context, Brightness.light)),
-          Expanded(child: _buildPreview(context, Brightness.dark)),
-        ],
-      ),
-    );
-  }
-
-  Widget _trafficLight(Color color) {
-    return Container(
-      width: 4,
-      height: 4,
-      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        return Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              for (var i = 0; i < children.length; i++) ...[
+                Expanded(child: children[i]),
+                if (i != children.length - 1) const SizedBox(width: 12),
+              ],
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -236,45 +150,184 @@ class _AppearanceOption extends StatelessWidget {
     required this.isSelected,
     required this.onTap,
     required this.preview,
-    required this.labelColor,
   });
 
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
   final Widget preview;
-  final Color labelColor;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    final theme = Theme.of(context);
+
+    return DmCard(
       onTap: onTap,
+      backgroundColor: isSelected
+          ? theme.colorScheme.primaryContainer.withValues(alpha: 0.55)
+          : theme.colorScheme.surface,
+      borderColor: isSelected
+          ? theme.colorScheme.primary.withValues(alpha: 0.38)
+          : theme.colorScheme.outlineVariant,
+      padding: const EdgeInsets.all(16),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: isSelected
-                    ? CupertinoColors.activeBlue
-                    : Colors.transparent,
-                width: 2,
+          Row(
+            children: [
+              Expanded(child: Text(label, style: theme.textTheme.titleSmall)),
+              if (isSelected)
+                Icon(Icons.check_circle, color: theme.colorScheme.primary),
+            ],
+          ),
+          const SizedBox(height: 12),
+          preview,
+        ],
+      ),
+    );
+  }
+}
+
+class _ModePreview extends StatelessWidget {
+  const _ModePreview({required this.left, this.right});
+
+  final Widget left;
+  final Widget? right;
+
+  @override
+  Widget build(BuildContext context) {
+    if (right == null) {
+      return left;
+    }
+
+    return Row(
+      children: [
+        Expanded(child: left),
+        const SizedBox(width: 8),
+        Expanded(child: right!),
+      ],
+    );
+  }
+}
+
+class _MiniWindow extends StatelessWidget {
+  const _MiniWindow({required this.brightness});
+
+  final Brightness brightness;
+
+  @override
+  Widget build(BuildContext context) {
+    final isLight = brightness == Brightness.light;
+    final background = isLight
+        ? const Color(0xFFFBFBFC)
+        : const Color(0xFF121821);
+    final topBar = isLight ? const Color(0xFFF1F3F6) : const Color(0xFF1F2937);
+    final rail = isLight ? const Color(0xFFE8EDF4) : const Color(0xFF17202B);
+    final surface = isLight ? Colors.white : const Color(0xFF0F1720);
+    final accent = isLight ? const Color(0xFF2563EB) : const Color(0xFF60A5FA);
+
+    return Container(
+      height: 92,
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      padding: const EdgeInsets.all(6),
+      child: Container(
+        decoration: BoxDecoration(
+          color: surface,
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Column(
+          children: [
+            Container(
+              height: 14,
+              decoration: BoxDecoration(
+                color: topBar,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(14),
+                ),
               ),
             ),
-            padding: const EdgeInsets.all(2),
-            child: preview,
-          ),
-          const SizedBox(height: 6),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: labelColor,
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            Expanded(
+              child: Row(
+                children: [
+                  Container(
+                    width: 24,
+                    decoration: BoxDecoration(
+                      color: rail,
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(14),
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(4),
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 6,
+                          decoration: BoxDecoration(
+                            color: accent,
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Container(
+                          height: 5,
+                          decoration: BoxDecoration(
+                            color: isLight
+                                ? const Color(0xFFC9D3E0)
+                                : const Color(0xFF334155),
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 36,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: accent.withValues(alpha: 0.85),
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Container(
+                            width: double.infinity,
+                            height: 6,
+                            decoration: BoxDecoration(
+                              color: isLight
+                                  ? const Color(0xFFE5E7EB)
+                                  : const Color(0xFF253041),
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Container(
+                            width: 42,
+                            height: 6,
+                            decoration: BoxDecoration(
+                              color: isLight
+                                  ? const Color(0xFFE5E7EB)
+                                  : const Color(0xFF253041),
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

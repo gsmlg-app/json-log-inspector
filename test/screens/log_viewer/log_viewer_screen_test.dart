@@ -84,7 +84,7 @@ void main() {
 
     testWidgets('has correct static route constants', (tester) async {
       expect(LogViewerScreen.name, equals('Log Viewer'));
-      expect(LogViewerScreen.path, equals('/'));
+      expect(LogViewerScreen.path, equals('/log-viewer'));
     });
 
     testWidgets('creates MultiBlocProvider with all three blocs', (

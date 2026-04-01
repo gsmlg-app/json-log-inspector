@@ -62,12 +62,14 @@ class SettingsThemeData {
   static SettingsThemeData _materialTheme(ColorScheme colorScheme) {
     return SettingsThemeData(
       settingsListBackground: colorScheme.surface,
-      settingsSectionBackground: colorScheme.surface,
-      titleTextColor: colorScheme.primary,
+      settingsSectionBackground: colorScheme.surfaceContainerLow,
+      titleTextColor: colorScheme.onSurfaceVariant,
       settingsTileTextColor: colorScheme.onSurface,
       tileDescriptionTextColor: colorScheme.onSurfaceVariant,
-      tileHighlightColor: colorScheme.surfaceContainerHighest,
-      leadingIconsColor: colorScheme.onSurfaceVariant,
+      dividerColor: colorScheme.outlineVariant,
+      trailingTextColor: colorScheme.onSurfaceVariant,
+      tileHighlightColor: colorScheme.primaryContainer.withValues(alpha: 0.42),
+      leadingIconsColor: colorScheme.primary,
       inactiveTitleColor: colorScheme.onSurface.withValues(alpha: 0.38),
       inactiveSubtitleColor: colorScheme.onSurfaceVariant.withValues(
         alpha: 0.38,
@@ -81,8 +83,7 @@ class SettingsThemeData {
   /// - Section background: surface (whiter, inner)
   static SettingsThemeData _cupertinoTheme(ColorScheme colorScheme) {
     return SettingsThemeData(
-      // Use surfaceContainerHighest (grayer) for list, surface (whiter) for sections
-      settingsListBackground: colorScheme.surfaceContainerHighest,
+      settingsListBackground: colorScheme.surfaceContainerLow,
       settingsSectionBackground: colorScheme.surface,
       titleTextColor: colorScheme.onSurfaceVariant,
       settingsTileTextColor: colorScheme.onSurface,
@@ -101,11 +102,13 @@ class SettingsThemeData {
   /// Fluent Design theme for Windows.
   static SettingsThemeData _fluentTheme(ColorScheme colorScheme) {
     return SettingsThemeData(
-      settingsListBackground: colorScheme.surfaceContainerLow,
-      settingsSectionBackground: colorScheme.surfaceContainerHighest,
-      titleTextColor: colorScheme.onSurface,
+      settingsListBackground: colorScheme.surface,
+      settingsSectionBackground: colorScheme.surfaceContainerLow,
+      titleTextColor: colorScheme.onSurfaceVariant,
       settingsTileTextColor: colorScheme.onSurface,
       tileDescriptionTextColor: colorScheme.onSurfaceVariant,
+      dividerColor: colorScheme.outlineVariant,
+      trailingTextColor: colorScheme.onSurfaceVariant,
       tileHighlightColor: colorScheme.surfaceContainerHigh,
       leadingIconsColor: colorScheme.primary,
       inactiveTitleColor: colorScheme.onSurface.withValues(alpha: 0.38),

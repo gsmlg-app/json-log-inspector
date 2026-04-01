@@ -22,8 +22,8 @@ class MaterialSettingsList extends AbstractSettingsList {
   });
 
   // M3 specifications
-  static const double _maxContentWidth = 840.0;
-  static const double _verticalPadding = 8.0;
+  static const double _maxContentWidth = 960.0;
+  static const double _verticalPadding = 10.0;
 
   @override
   Widget build(BuildContext context) {

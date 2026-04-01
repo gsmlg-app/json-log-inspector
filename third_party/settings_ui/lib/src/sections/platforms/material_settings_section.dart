@@ -19,7 +19,7 @@ class MaterialSettingsSection extends AbstractSettingsSection {
     super.key,
   });
 
-  // M3 specifications
+  static const double _cornerRadius = 24.0;
   static const double _headerFontSize = 14.0;
   static const double _horizontalPadding = 16.0;
   static const double _headerTopPadding = 16.0;
@@ -36,8 +36,24 @@ class MaterialSettingsSection extends AbstractSettingsSection {
     final textScaler = MediaQuery.of(context).textScaler;
     final tileList = buildTileList();
 
+    final tileSurface = Container(
+      decoration: BoxDecoration(
+        color:
+            theme.themeData.settingsSectionBackground ??
+            colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(_cornerRadius),
+        border: Border.all(
+          color: theme.themeData.dividerColor ?? colorScheme.outlineVariant,
+        ),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(_cornerRadius),
+        child: tileList,
+      ),
+    );
+
     if (title == null) {
-      return Padding(padding: margin ?? EdgeInsets.zero, child: tileList);
+      return Padding(padding: margin ?? EdgeInsets.zero, child: tileSurface);
     }
 
     return Padding(
@@ -55,16 +71,16 @@ class MaterialSettingsSection extends AbstractSettingsSection {
             ),
             child: DefaultTextStyle(
               style: TextStyle(
-                color: theme.themeData.titleTextColor ?? colorScheme.primary,
+                color:
+                    theme.themeData.titleTextColor ??
+                    colorScheme.onSurfaceVariant,
                 fontSize: _headerFontSize,
-                fontWeight: FontWeight.w500,
-                letterSpacing: 0.1,
+                fontWeight: FontWeight.w600,
               ),
               child: title!,
             ),
           ),
-          // Tiles (no container, flat style)
-          tileList,
+          tileSurface,
         ],
       ),
     );
