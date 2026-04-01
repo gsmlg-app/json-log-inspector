@@ -39,6 +39,8 @@ class DetailPanel extends StatelessWidget {
               response: responseData,
               durationMs: record.durationMs ?? pairedRecord?.durationMs,
             ),
+          if (requestData == null && responseData == null)
+            _RawJsonSection(json: record.json),
         ],
       ),
     );
@@ -286,6 +288,26 @@ class _CollapsibleSectionState extends State<_CollapsibleSection> {
         ),
         if (_isExpanded) widget.child,
       ],
+    );
+  }
+}
+
+class _RawJsonSection extends StatelessWidget {
+  const _RawJsonSection({required this.json});
+
+  final Map<String, dynamic> json;
+
+  @override
+  Widget build(BuildContext context) {
+    return _CollapsibleSection(
+      title: 'JSON Data',
+      icon: Icons.data_object,
+      iconColor: Theme.of(context).colorScheme.primary,
+      initiallyExpanded: true,
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: JsonTreeView(data: json, initiallyExpanded: true),
+      ),
     );
   }
 }

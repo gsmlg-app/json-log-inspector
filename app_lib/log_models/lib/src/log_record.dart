@@ -15,6 +15,7 @@ class LogRecord extends Equatable {
     this.request,
     this.response,
     required this.rawLine,
+    this.json = const {},
   });
 
   /// Parses a [LogRecord] from a JSON map.
@@ -25,9 +26,11 @@ class LogRecord extends Equatable {
     required String rawLine,
   }) {
     return LogRecord(
-      ts: json['ts'] as String,
-      requestId: json['request_id'] as String,
-      recordType: json['record_type'] as String,
+      ts: json['ts'] as String? ?? json['time'] as String? ?? '',
+      requestId: json['request_id'] as String? ?? '',
+      recordType: json['record_type'] as String? ??
+          json['level'] as String? ??
+          'log',
       durationMs: (json['duration_ms'] as num?)?.toDouble(),
       request: json['request'] != null
           ? _parseRequest(json['request'] as Map<String, dynamic>)
@@ -36,6 +39,7 @@ class LogRecord extends Equatable {
           ? _parseResponse(json['response'] as Map<String, dynamic>)
           : null,
       rawLine: rawLine,
+      json: json,
     );
   }
 
@@ -47,6 +51,9 @@ class LogRecord extends Equatable {
   final ResponseData? response;
   final String rawLine;
 
+  /// The original parsed JSON map.
+  final Map<String, dynamic> json;
+
   LogRecord copyWith({
     String? ts,
     String? requestId,
@@ -55,6 +62,7 @@ class LogRecord extends Equatable {
     RequestData? Function()? request,
     ResponseData? Function()? response,
     String? rawLine,
+    Map<String, dynamic>? json,
   }) {
     return LogRecord(
       ts: ts ?? this.ts,
@@ -64,6 +72,7 @@ class LogRecord extends Equatable {
       request: request != null ? request() : this.request,
       response: response != null ? response() : this.response,
       rawLine: rawLine ?? this.rawLine,
+      json: json ?? this.json,
     );
   }
 
@@ -76,6 +85,7 @@ class LogRecord extends Equatable {
     request,
     response,
     rawLine,
+    json,
   ];
 
   static RequestData _parseRequest(Map<String, dynamic> json) {

@@ -53,7 +53,7 @@ class EntryReader {
       final record = LogRecord.fromJson(json, rawLine: rawLine);
       _cache.put(lineIndex, record);
       return record;
-    } on FormatException {
+    } on Exception {
       return null;
     }
   }

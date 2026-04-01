@@ -6,8 +6,14 @@ sealed class SelectionEvent {
 
 final class EntrySelected extends SelectionEvent {
   final int index;
+  final LogRecord record;
+  final LogRecord? pairedRecord;
 
-  const EntrySelected(this.index);
+  const EntrySelected({
+    required this.index,
+    required this.record,
+    this.pairedRecord,
+  });
 }
 
 final class SelectionCleared extends SelectionEvent {

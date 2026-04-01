@@ -49,6 +49,7 @@ class _LogViewerBody extends StatelessWidget {
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
+      bodyRatio: 0.4,
       body: (context) => SafeArea(
         child: BlocBuilder<LogFileBloc, LogFileState>(
           builder: (context, fileState) {
@@ -92,6 +93,20 @@ class _LogViewerBody extends StatelessWidget {
           },
         ),
       ),
+      secondaryBody: (context) => BlocBuilder<SelectionBloc, SelectionState>(
+        builder: (context, selectionState) {
+          if (selectionState.selectedRecord == null) {
+            return const Center(
+              child: Text('Select an entry to view details'),
+            );
+          }
+          return DetailPanel(
+            record: selectionState.selectedRecord!,
+            pairedRecord: selectionState.pairedRecord,
+          );
+        },
+      ),
+      smallSecondaryBody: AdaptiveScaffold.emptyBuilder,
     );
   }
 }
@@ -140,62 +155,34 @@ class _InitialView extends StatelessWidget {
   }
 }
 
-class _LoadedView extends StatefulWidget {
+class _LoadedView extends StatelessWidget {
   const _LoadedView({required this.fileState});
 
   final LogFileState fileState;
 
   @override
-  State<_LoadedView> createState() => _LoadedViewState();
-}
-
-class _LoadedViewState extends State<_LoadedView> {
-  LogRecord? _selectedRecord;
-  LogRecord? _pairedRecord;
-
-  @override
   Widget build(BuildContext context) {
-    final index = widget.fileState.index!;
-    final entryReader = widget.fileState.entryReader!;
-    final filteredIndices = widget.fileState.filteredIndices;
+    final index = fileState.index!;
+    final entryReader = fileState.entryReader!;
+    final filteredIndices = fileState.filteredIndices;
     final displayIndices =
         filteredIndices ?? List.generate(index.totalLines, (i) => i);
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isWide = screenWidth > 800;
 
     return Column(
       children: [
-        // Toolbar
         _Toolbar(
-          fileState: widget.fileState,
+          fileState: fileState,
           displayCount: displayIndices.length,
         ),
-        // Main content
         Expanded(
-          child: isWide
-              ? _DesktopLayout(
-                  displayIndices: displayIndices,
-                  entryReader: entryReader,
-                  index: index,
-                  selectedRecord: _selectedRecord,
-                  pairedRecord: _pairedRecord,
-                  onEntrySelected: (record, paired) {
-                    if (!mounted) return;
-                    setState(() {
-                      _selectedRecord = record;
-                      _pairedRecord = paired;
-                    });
-                  },
-                )
-              : _MobileLayout(
-                  displayIndices: displayIndices,
-                  entryReader: entryReader,
-                  index: index,
-                ),
+          child: _LogList(
+            displayIndices: displayIndices,
+            entryReader: entryReader,
+            index: index,
+          ),
         ),
-        // Status bar
         _StatusBar(
-          filePath: widget.fileState.filePath ?? '',
+          filePath: fileState.filePath ?? '',
           totalLines: index.totalLines,
           validLines: index.validLines,
           shownLines: displayIndices.length,
@@ -232,14 +219,12 @@ class _ToolbarState extends State<_Toolbar> {
             children: [
               Row(
                 children: [
-                  // Open File button
                   IconButton(
                     icon: const Icon(Icons.folder_open, size: 20),
                     tooltip: 'Open File',
                     onPressed: () => _openFile(context),
                   ),
                   const SizedBox(width: 4),
-                  // Filter and search bar
                   Expanded(
                     child: FilterBar(
                       onFilterAdded: (rule) {
@@ -258,14 +243,12 @@ class _ToolbarState extends State<_Toolbar> {
                     ),
                   ),
                   const SizedBox(width: 4),
-                  // + Add Filter button
                   FilledButton.tonalIcon(
                     icon: const Icon(Icons.add, size: 18),
                     label: const Text('Add Filter'),
                     onPressed: () => _showFilterRuleBuilder(context),
                   ),
                   const SizedBox(width: 4),
-                  // Presets dropdown
                   _PresetsDropdown(
                     presets: filterState.presets,
                     onPresetApplied: (preset) {
@@ -380,93 +363,16 @@ class _ToolbarState extends State<_Toolbar> {
   }
 }
 
-class _DesktopLayout extends StatelessWidget {
-  const _DesktopLayout({
-    required this.displayIndices,
-    required this.entryReader,
-    required this.index,
-    required this.selectedRecord,
-    required this.pairedRecord,
-    required this.onEntrySelected,
-  });
-
-  final List<int> displayIndices;
-  final EntryReader entryReader;
-  final FileIndexResult index;
-  final LogRecord? selectedRecord;
-  final LogRecord? pairedRecord;
-  final void Function(LogRecord record, LogRecord? paired) onEntrySelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        // Master list
-        Expanded(
-          flex: 2,
-          child: _LogList(
-            displayIndices: displayIndices,
-            entryReader: entryReader,
-            index: index,
-            onEntrySelected: onEntrySelected,
-          ),
-        ),
-        const VerticalDivider(width: 1),
-        // Detail panel
-        Expanded(
-          flex: 3,
-          child: selectedRecord != null
-              ? DetailPanel(record: selectedRecord!, pairedRecord: pairedRecord)
-              : const Center(child: Text('Select an entry to view details')),
-        ),
-      ],
-    );
-  }
-}
-
-class _MobileLayout extends StatelessWidget {
-  const _MobileLayout({
-    required this.displayIndices,
-    required this.entryReader,
-    required this.index,
-  });
-
-  final List<int> displayIndices;
-  final EntryReader entryReader;
-  final FileIndexResult index;
-
-  @override
-  Widget build(BuildContext context) {
-    return _LogList(
-      displayIndices: displayIndices,
-      entryReader: entryReader,
-      index: index,
-      onEntrySelected: (record, paired) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => Scaffold(
-              appBar: AppBar(title: const Text('Entry Detail')),
-              body: DetailPanel(record: record, pairedRecord: paired),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
 class _LogList extends StatefulWidget {
   const _LogList({
     required this.displayIndices,
     required this.entryReader,
     required this.index,
-    required this.onEntrySelected,
   });
 
   final List<int> displayIndices;
   final EntryReader entryReader;
   final FileIndexResult index;
-  final void Function(LogRecord record, LogRecord? paired) onEntrySelected;
 
   @override
   State<_LogList> createState() => _LogListState();
@@ -535,7 +441,33 @@ class _LogListState extends State<_LogList> {
       }
     }
 
-    widget.onEntrySelected(record, paired);
+    if (!mounted) return;
+
+    context.read<SelectionBloc>().add(EntrySelected(
+      index: lineIndex,
+      record: record,
+      pairedRecord: paired,
+    ));
+
+    // On small screens (no secondaryBody), open a fullscreen dialog.
+    if (!mounted) return;
+    final isSmall = Breakpoints.small.isActive(context);
+    if (isSmall) {
+      showDialog<void>(
+        context: context,
+        useSafeArea: false,
+        builder: (dialogContext) => Scaffold(
+          appBar: AppBar(
+            title: const Text('Entry Detail'),
+            leading: IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () => Navigator.of(dialogContext).pop(),
+            ),
+          ),
+          body: DetailPanel(record: record, pairedRecord: paired),
+        ),
+      );
+    }
   }
 }
 

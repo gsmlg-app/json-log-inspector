@@ -19,6 +19,13 @@ void main() {
     rawLine: '{"ts":"2024-01-01T00:00:01Z","request_id":"req-1"}',
   );
 
+  const sampleRecord2 = LogRecord(
+    ts: '2024-01-01T00:00:02Z',
+    requestId: 'req-2',
+    recordType: 'request',
+    rawLine: '{"ts":"2024-01-01T00:00:02Z","request_id":"req-2"}',
+  );
+
   group('SelectionBloc', () {
     group('initial state', () {
       test('has null selectedIndex, selectedRecord, and pairedRecord', () {
@@ -32,25 +39,50 @@ void main() {
 
     group('EntrySelected', () {
       blocTest<SelectionBloc, SelectionState>(
-        'sets selectedIndex',
+        'sets selectedIndex and record',
         build: SelectionBloc.new,
-        act: (bloc) => bloc.add(const EntrySelected(5)),
-        expect: () => [const SelectionState(selectedIndex: 5)],
+        act: (bloc) => bloc.add(const EntrySelected(
+          index: 5,
+          record: sampleRecord,
+        )),
+        expect: () => [
+          const SelectionState(
+            selectedIndex: 5,
+            selectedRecord: sampleRecord,
+          ),
+        ],
       );
 
       blocTest<SelectionBloc, SelectionState>(
-        'updates selectedIndex when selecting a different entry',
+        'updates when selecting a different entry',
         build: SelectionBloc.new,
-        seed: () => const SelectionState(selectedIndex: 3),
-        act: (bloc) => bloc.add(const EntrySelected(7)),
-        expect: () => [const SelectionState(selectedIndex: 7)],
+        seed: () => const SelectionState(
+          selectedIndex: 3,
+          selectedRecord: sampleRecord,
+        ),
+        act: (bloc) => bloc.add(const EntrySelected(
+          index: 7,
+          record: sampleRecord2,
+        )),
+        expect: () => [
+          const SelectionState(
+            selectedIndex: 7,
+            selectedRecord: sampleRecord2,
+          ),
+        ],
       );
 
       blocTest<SelectionBloc, SelectionState>(
-        'selecting the same index emits state with same index',
+        'selecting the same index and record does not re-emit',
         build: SelectionBloc.new,
-        seed: () => const SelectionState(selectedIndex: 5),
-        act: (bloc) => bloc.add(const EntrySelected(5)),
+        seed: () => const SelectionState(
+          selectedIndex: 5,
+          selectedRecord: sampleRecord,
+        ),
+        act: (bloc) => bloc.add(const EntrySelected(
+          index: 5,
+          record: sampleRecord,
+        )),
         // Equatable means same state is not re-emitted
         expect: () => <SelectionState>[],
       );
@@ -58,22 +90,29 @@ void main() {
       blocTest<SelectionBloc, SelectionState>(
         'selecting index 0 works correctly',
         build: SelectionBloc.new,
-        act: (bloc) => bloc.add(const EntrySelected(0)),
-        expect: () => [const SelectionState(selectedIndex: 0)],
+        act: (bloc) => bloc.add(const EntrySelected(
+          index: 0,
+          record: sampleRecord,
+        )),
+        expect: () => [
+          const SelectionState(
+            selectedIndex: 0,
+            selectedRecord: sampleRecord,
+          ),
+        ],
       );
 
       blocTest<SelectionBloc, SelectionState>(
-        'selecting entry preserves existing selectedRecord and pairedRecord',
+        'selecting entry with paired record stores both',
         build: SelectionBloc.new,
-        seed: () => const SelectionState(
-          selectedIndex: 1,
-          selectedRecord: sampleRecord,
+        act: (bloc) => bloc.add(const EntrySelected(
+          index: 1,
+          record: sampleRecord,
           pairedRecord: pairedRecord,
-        ),
-        act: (bloc) => bloc.add(const EntrySelected(2)),
+        )),
         expect: () => [
           const SelectionState(
-            selectedIndex: 2,
+            selectedIndex: 1,
             selectedRecord: sampleRecord,
             pairedRecord: pairedRecord,
           ),
@@ -85,14 +124,28 @@ void main() {
         build: SelectionBloc.new,
         act: (bloc) {
           bloc
-            ..add(const EntrySelected(1))
-            ..add(const EntrySelected(2))
-            ..add(const EntrySelected(3));
+            ..add(const EntrySelected(index: 1, record: sampleRecord))
+            ..add(const EntrySelected(index: 2, record: sampleRecord2))
+            ..add(const EntrySelected(
+              index: 3,
+              record: pairedRecord,
+              pairedRecord: sampleRecord,
+            ));
         },
         expect: () => [
-          const SelectionState(selectedIndex: 1),
-          const SelectionState(selectedIndex: 2),
-          const SelectionState(selectedIndex: 3),
+          const SelectionState(
+            selectedIndex: 1,
+            selectedRecord: sampleRecord,
+          ),
+          const SelectionState(
+            selectedIndex: 2,
+            selectedRecord: sampleRecord2,
+          ),
+          const SelectionState(
+            selectedIndex: 3,
+            selectedRecord: pairedRecord,
+            pairedRecord: sampleRecord,
+          ),
         ],
       );
     });
@@ -101,7 +154,10 @@ void main() {
       blocTest<SelectionBloc, SelectionState>(
         'resets state to initial values',
         build: SelectionBloc.new,
-        seed: () => const SelectionState(selectedIndex: 5),
+        seed: () => const SelectionState(
+          selectedIndex: 5,
+          selectedRecord: sampleRecord,
+        ),
         act: (bloc) => bloc.add(const SelectionCleared()),
         expect: () => [const SelectionState()],
       );
@@ -185,14 +241,20 @@ void main() {
         build: SelectionBloc.new,
         act: (bloc) {
           bloc
-            ..add(const EntrySelected(3))
+            ..add(const EntrySelected(index: 3, record: sampleRecord))
             ..add(const SelectionCleared())
-            ..add(const EntrySelected(7));
+            ..add(const EntrySelected(index: 7, record: sampleRecord2));
         },
         expect: () => [
-          const SelectionState(selectedIndex: 3),
+          const SelectionState(
+            selectedIndex: 3,
+            selectedRecord: sampleRecord,
+          ),
           const SelectionState(),
-          const SelectionState(selectedIndex: 7),
+          const SelectionState(
+            selectedIndex: 7,
+            selectedRecord: sampleRecord2,
+          ),
         ],
       );
     });

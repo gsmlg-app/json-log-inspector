@@ -12,7 +12,11 @@ class SelectionBloc extends Bloc<SelectionEvent, SelectionState> {
   }
 
   void _onEntrySelected(EntrySelected event, Emitter<SelectionState> emitter) {
-    emitter(state.copyWith(selectedIndex: () => event.index));
+    emitter(state.copyWith(
+      selectedIndex: () => event.index,
+      selectedRecord: () => event.record,
+      pairedRecord: () => event.pairedRecord,
+    ));
   }
 
   void _onSelectionCleared(
