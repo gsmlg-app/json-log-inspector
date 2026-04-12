@@ -1,8 +1,6 @@
-import 'package:app_adaptive_widgets/app_adaptive_widgets.dart';
-import 'package:app_theme/app_theme.dart';
+import 'package:duskmoon_ui/duskmoon_ui.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:log_models/log_models.dart';
 import 'package:log_parser/log_parser.dart';
 import 'package:log_viewer_bloc/log_viewer_bloc.dart';
@@ -10,6 +8,22 @@ import 'package:log_viewer_widgets/log_viewer_widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../destination.dart';
+
+TextStyle _codeTextStyle({
+  double? fontSize,
+  FontWeight? fontWeight,
+  Color? color,
+  double? height,
+}) {
+  return TextStyle(
+    fontFamily: 'Menlo',
+    fontFamilyFallback: const ['Cascadia Code', 'Consolas', 'Courier New'],
+    fontSize: fontSize,
+    fontWeight: fontWeight,
+    color: color,
+    height: height,
+  );
+}
 
 BoxDecoration _panelDecoration(ThemeData theme, {bool emphasized = false}) {
   final colorScheme = theme.colorScheme;
@@ -62,7 +76,7 @@ class _LogViewerBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return AppAdaptiveScaffold(
+    return DmAdaptiveScaffold(
       selectedIndex: Destinations.indexOf(
         const Key(LogViewerScreen.name),
         context,
@@ -118,7 +132,7 @@ class _LogViewerBody extends StatelessWidget {
                         Icon(
                           Icons.error_outline,
                           size: 48,
-                          color: Theme.of(context).statusColors.error,
+                          color: Theme.of(context).colorScheme.error,
                         ),
                         const SizedBox(height: 16),
                         Text(
@@ -986,7 +1000,7 @@ class _StatusChip extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             label,
-            style: theme.codeTextStyle(
+            style: _codeTextStyle(
               fontSize: 11.5,
               fontWeight: FontWeight.w600,
               color: theme.colorScheme.onSurfaceVariant,

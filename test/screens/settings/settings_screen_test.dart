@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:json_log_inspector/screens/settings/settings_screen.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:theme_bloc/theme_bloc.dart';
+import 'package:duskmoon_ui/duskmoon_ui.dart';
 import 'package:gamepad_bloc/gamepad_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:app_locale/app_locale.dart';
 
 void main() {
   group('SettingsScreen', () {
-    late ThemeBloc themeBloc;
+    late DmThemeBloc themeBloc;
     late GamepadBloc gamepadBloc;
     late SharedPreferences sharedPreferences;
 
     setUp(() async {
       SharedPreferences.setMockInitialValues({});
       sharedPreferences = await SharedPreferences.getInstance();
-      themeBloc = ThemeBloc(sharedPreferences);
+      themeBloc = DmThemeBloc(prefs: sharedPreferences);
       gamepadBloc = GamepadBloc(
         navigatorKey: GlobalKey<NavigatorState>(),
         routeNames: ['Log Viewer', 'Settings'],
@@ -34,7 +33,7 @@ void main() {
         create: (context) => sharedPreferences,
         child: MultiBlocProvider(
           providers: [
-            BlocProvider<ThemeBloc>(create: (context) => themeBloc),
+            BlocProvider<DmThemeBloc>(create: (context) => themeBloc),
             BlocProvider<GamepadBloc>(create: (context) => gamepadBloc),
           ],
           child: MaterialApp(

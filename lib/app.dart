@@ -1,8 +1,7 @@
+import 'package:duskmoon_ui/duskmoon_ui.dart';
 import 'package:app_locale/app_locale.dart';
 import 'package:app_provider/app_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:theme_bloc/theme_bloc.dart';
 
 import 'destination.dart';
 import 'router.dart';
@@ -17,9 +16,9 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
-    final themeBloc = context.read<ThemeBloc>();
+    final themeBloc = context.read<DmThemeBloc>();
 
-    return BlocBuilder<ThemeBloc, ThemeState>(
+    return BlocBuilder<DmThemeBloc, DmThemeState>(
       bloc: themeBloc,
       builder: (context, state) {
         return _AppContent(themeState: state);
@@ -31,11 +30,12 @@ class _AppState extends State<App> {
 class _AppContent extends StatelessWidget {
   const _AppContent({required this.themeState});
 
-  final ThemeState themeState;
+  final DmThemeState themeState;
 
   @override
   Widget build(BuildContext context) {
     final router = AppRouter.router;
+    final entry = themeState.entry;
     return AppBlocProvider(
       navigatorKey: AppRouter.key,
       routeNames: Destinations.routeNames,
@@ -44,8 +44,8 @@ class _AppContent extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         routerConfig: router,
         onGenerateTitle: (context) => context.l10n.appName,
-        theme: themeState.theme.lightTheme,
-        darkTheme: themeState.theme.darkTheme,
+        theme: entry.light,
+        darkTheme: entry.dark,
         themeMode: themeState.themeMode,
         localizationsDelegates: AppLocale.localizationsDelegates,
         supportedLocales: AppLocale.supportedLocales,

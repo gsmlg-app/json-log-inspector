@@ -1,4 +1,4 @@
-import 'package:app_adaptive_widgets/app_adaptive_widgets.dart';
+import 'package:duskmoon_ui/duskmoon_ui.dart';
 import 'package:app_gamepad/app_gamepad.dart';
 import 'package:app_locale/app_locale.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +9,6 @@ import 'package:json_log_inspector/screens/settings/widgets/controller_input_sta
 import 'package:json_log_inspector/screens/settings/widgets/stick_visualizer.dart';
 import 'package:json_log_inspector/screens/settings/widgets/trigger_bar.dart';
 import 'package:json_log_inspector/screens/settings/widgets/xbox_controller_painter.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gamepad_bloc/gamepad_bloc.dart';
 
 class ControllerTestScreen extends StatefulWidget {
@@ -92,16 +91,29 @@ class _ControllerTestScreenState extends State<ControllerTestScreen>
 
   @override
   Widget build(BuildContext context) {
-    return AppAdaptiveScaffold(
+    return DmAdaptiveScaffold(
       selectedIndex: Destinations.indexOf(
         const Key(SettingsScreen.name),
         context,
       ),
       onSelectedIndexChange: (idx) => Destinations.changeHandler(idx, context),
       destinations: Destinations.navs(context),
-      appBar: DmAppBar(
-        title: Text(context.l10n.controllerTest),
-        subtitle: 'Live input preview and raw event stream.',
+      appBar: AppBar(
+        toolbarHeight: 76,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(context.l10n.controllerTest),
+            const SizedBox(height: 2),
+            Text(
+              'Live input preview and raw event stream.',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
       ),
       body: (context) {
         final theme = Theme.of(context);
@@ -250,7 +262,7 @@ class _ControllerTestScreenState extends State<ControllerTestScreen>
           ),
         );
       },
-      smallSecondaryBody: AdaptiveScaffold.emptyBuilder,
+      smallSecondaryBody: (_) => const SizedBox.shrink(),
     );
   }
 

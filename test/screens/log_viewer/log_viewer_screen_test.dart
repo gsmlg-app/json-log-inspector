@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gamepad_bloc/gamepad_bloc.dart';
 import 'package:json_log_inspector/screens/log_viewer/log_viewer_screen.dart';
 import 'package:app_locale/app_locale.dart';
 import 'package:log_viewer_bloc/log_viewer_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:theme_bloc/theme_bloc.dart';
+import 'package:duskmoon_ui/duskmoon_ui.dart';
 
 void main() {
   // Loaded file and error state behaviors are tested at the BLoC and widget
@@ -19,13 +18,13 @@ void main() {
 
   group('LogViewerScreen', () {
     late SharedPreferences sharedPrefs;
-    late ThemeBloc themeBloc;
+    late DmThemeBloc themeBloc;
     late GamepadBloc gamepadBloc;
 
     setUp(() async {
       SharedPreferences.setMockInitialValues({});
       sharedPrefs = await SharedPreferences.getInstance();
-      themeBloc = ThemeBloc(sharedPrefs);
+      themeBloc = DmThemeBloc(prefs: sharedPrefs);
       gamepadBloc = GamepadBloc(
         navigatorKey: GlobalKey<NavigatorState>(),
         routeNames: ['Log Viewer', 'Settings'],
@@ -44,7 +43,7 @@ void main() {
           value: sharedPrefs,
           child: MultiBlocProvider(
             providers: [
-              BlocProvider<ThemeBloc>.value(value: themeBloc),
+              BlocProvider<DmThemeBloc>.value(value: themeBloc),
               BlocProvider<GamepadBloc>.value(value: gamepadBloc),
             ],
             child: MaterialApp(

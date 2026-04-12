@@ -1,12 +1,8 @@
-import 'package:app_adaptive_widgets/app_adaptive_widgets.dart';
+import 'package:duskmoon_ui/duskmoon_ui.dart';
 import 'package:app_locale/app_locale.dart';
-import 'package:app_theme/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:json_log_inspector/screens/settings/settings_screen.dart';
 import 'package:json_log_inspector/screens/settings/widgets/settings_page_shell.dart';
-import 'package:settings_ui/settings_ui.dart';
-import 'package:theme_bloc/theme_bloc.dart';
 
 class AccentColorSettingsScreen extends StatelessWidget {
   static const name = 'Accent Color Settings';
@@ -16,14 +12,14 @@ class AccentColorSettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeBloc = context.read<ThemeBloc>();
+    final themeBloc = context.read<DmThemeBloc>();
     final isLight = Theme.of(context).brightness == Brightness.light;
 
     return DmSettingsPageShell(
       selectedKey: const Key(SettingsScreen.name),
       title: context.l10n.accentColor,
       subtitle: 'Select the active Duskmoon palette for the whole app.',
-      hero: BlocBuilder<ThemeBloc, ThemeState>(
+      hero: BlocBuilder<DmThemeBloc, DmThemeState>(
         bloc: themeBloc,
         builder: (context, state) {
           return DmSettingsHeroCard(
@@ -37,18 +33,16 @@ class AccentColorSettingsScreen extends StatelessWidget {
               children: [
                 DmSettingsMetaPill(
                   icon: Icons.color_lens_outlined,
-                  label: 'Current: ${state.theme.name}',
+                  label: 'Current: ${state.themeName}',
                 ),
               ],
             ),
           );
         },
       ),
-      child: BlocBuilder<ThemeBloc, ThemeState>(
+      child: BlocBuilder<DmThemeBloc, DmThemeState>(
         bloc: themeBloc,
         builder: (context, state) {
-          final currentTheme = state.theme;
-
           return SettingsList(
             sections: [
               SettingsSection(
@@ -56,11 +50,11 @@ class AccentColorSettingsScreen extends StatelessWidget {
                 tiles: <AbstractSettingsTile>[
                   CustomSettingsTile(
                     child: _AccentColorPicker(
-                      themes: themeList,
-                      currentTheme: currentTheme,
+                      themes: DmThemeData.themes,
+                      currentThemeName: state.themeName,
                       isLight: isLight,
-                      onThemeChanged: (theme) {
-                        themeBloc.add(ChangeTheme(theme));
+                      onThemeChanged: (name) {
+                        themeBloc.add(DmSetTheme(name));
                       },
                     ),
                   ),
@@ -77,15 +71,15 @@ class AccentColorSettingsScreen extends StatelessWidget {
 class _AccentColorPicker extends StatelessWidget {
   const _AccentColorPicker({
     required this.themes,
-    required this.currentTheme,
+    required this.currentThemeName,
     required this.isLight,
     required this.onThemeChanged,
   });
 
-  final List<AppTheme> themes;
-  final AppTheme currentTheme;
+  final List<DmThemeEntry> themes;
+  final String currentThemeName;
   final bool isLight;
-  final ValueChanged<AppTheme> onThemeChanged;
+  final ValueChanged<String> onThemeChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -96,53 +90,73 @@ class _AccentColorPicker extends StatelessWidget {
         runSpacing: 12,
         children: themes.map((theme) {
           final colorScheme = isLight
-              ? theme.lightTheme.colorScheme
-              : theme.darkTheme.colorScheme;
-          final isSelected = currentTheme.name == theme.name;
+              ? theme.light.colorScheme
+              : theme.dark.colorScheme;
+          final isSelected = currentThemeName == theme.name;
 
           return SizedBox(
             width: 180,
-            child: DmCard(
-              onTap: () => onThemeChanged(theme),
-              backgroundColor: isSelected
-                  ? colorScheme.primaryContainer.withValues(alpha: 0.52)
-                  : Theme.of(context).colorScheme.surface,
-              borderColor: isSelected
-                  ? colorScheme.primary.withValues(alpha: 0.35)
-                  : Theme.of(context).colorScheme.outlineVariant,
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      _ColorDot(color: colorScheme.primary),
-                      const SizedBox(width: 8),
-                      _ColorDot(color: colorScheme.secondary),
-                      const SizedBox(width: 8),
-                      _ColorDot(color: colorScheme.tertiary),
-                      const Spacer(),
-                      if (isSelected)
-                        Icon(
-                          Icons.check_circle,
-                          color: colorScheme.primary,
-                          size: 20,
-                        ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => onThemeChanged(theme.name),
+                borderRadius: BorderRadius.circular(24),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? colorScheme.primaryContainer.withValues(alpha: 0.52)
+                        : Theme.of(context).colorScheme.surface,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: isSelected
+                          ? colorScheme.primary.withValues(alpha: 0.35)
+                          : Theme.of(context).colorScheme.outlineVariant,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.shadow.withValues(alpha: 0.06),
+                        blurRadius: 18,
+                        offset: const Offset(0, 10),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 14),
-                  Text(
-                    theme.name,
-                    style: Theme.of(context).textTheme.titleSmall,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          _ColorDot(color: colorScheme.primary),
+                          const SizedBox(width: 8),
+                          _ColorDot(color: colorScheme.secondary),
+                          const SizedBox(width: 8),
+                          _ColorDot(color: colorScheme.tertiary),
+                          const Spacer(),
+                          if (isSelected)
+                            Icon(
+                              Icons.check_circle,
+                              color: colorScheme.primary,
+                              size: 20,
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
+                      Text(
+                        theme.name,
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${colorScheme.brightness == Brightness.light ? 'Light' : 'Dark'} adaptive palette',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${colorScheme.brightness == Brightness.light ? 'Light' : 'Dark'} adaptive palette',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           );

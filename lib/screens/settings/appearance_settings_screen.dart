@@ -1,12 +1,8 @@
-import 'package:app_adaptive_widgets/app_adaptive_widgets.dart';
+import 'package:duskmoon_ui/duskmoon_ui.dart';
 import 'package:app_locale/app_locale.dart';
-import 'package:app_theme/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:json_log_inspector/screens/settings/settings_screen.dart';
 import 'package:json_log_inspector/screens/settings/widgets/settings_page_shell.dart';
-import 'package:settings_ui/settings_ui.dart';
-import 'package:theme_bloc/theme_bloc.dart';
 
 class AppearanceSettingsScreen extends StatelessWidget {
   static const name = 'Appearance Settings';
@@ -16,13 +12,13 @@ class AppearanceSettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeBloc = context.read<ThemeBloc>();
+    final themeBloc = context.read<DmThemeBloc>();
 
     return DmSettingsPageShell(
       selectedKey: const Key(SettingsScreen.name),
       title: context.l10n.appearance,
       subtitle: 'Choose how the interface responds to light and dark modes.',
-      hero: BlocBuilder<ThemeBloc, ThemeState>(
+      hero: BlocBuilder<DmThemeBloc, DmThemeState>(
         bloc: themeBloc,
         builder: (context, state) {
           return DmSettingsHeroCard(
@@ -46,7 +42,7 @@ class AppearanceSettingsScreen extends StatelessWidget {
           );
         },
       ),
-      child: BlocBuilder<ThemeBloc, ThemeState>(
+      child: BlocBuilder<DmThemeBloc, DmThemeState>(
         bloc: themeBloc,
         builder: (context, state) {
           return SettingsList(
@@ -58,7 +54,7 @@ class AppearanceSettingsScreen extends StatelessWidget {
                     child: _AppearancePicker(
                       currentMode: state.themeMode,
                       onModeChanged: (mode) {
-                        themeBloc.add(ChangeThemeMode(mode));
+                        themeBloc.add(DmSetThemeMode(mode));
                       },
                     ),
                   ),
@@ -161,28 +157,51 @@ class _AppearanceOption extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return DmCard(
-      onTap: onTap,
-      backgroundColor: isSelected
-          ? theme.colorScheme.primaryContainer.withValues(alpha: 0.55)
-          : theme.colorScheme.surface,
-      borderColor: isSelected
+    final bgColor = isSelected
+        ? theme.colorScheme.primaryContainer.withValues(alpha: 0.55)
+        : theme.colorScheme.surface;
+    final border = Border.all(
+      color: isSelected
           ? theme.colorScheme.primary.withValues(alpha: 0.38)
           : theme.colorScheme.outlineVariant,
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(child: Text(label, style: theme.textTheme.titleSmall)),
-              if (isSelected)
-                Icon(Icons.check_circle, color: theme.colorScheme.primary),
+    );
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(24),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(24),
+            border: border,
+            boxShadow: [
+              BoxShadow(
+                color: theme.colorScheme.shadow.withValues(alpha: 0.06),
+                blurRadius: 18,
+                offset: const Offset(0, 10),
+              ),
             ],
           ),
-          const SizedBox(height: 12),
-          preview,
-        ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(label, style: theme.textTheme.titleSmall),
+                  ),
+                  if (isSelected)
+                    Icon(Icons.check_circle, color: theme.colorScheme.primary),
+                ],
+              ),
+              const SizedBox(height: 12),
+              preview,
+            ],
+          ),
+        ),
       ),
     );
   }

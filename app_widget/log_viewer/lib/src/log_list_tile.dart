@@ -1,4 +1,4 @@
-import 'package:app_theme/app_theme.dart';
+import 'theme_helpers.dart';
 import 'package:flutter/material.dart';
 
 /// A row widget for displaying a log entry in a list.

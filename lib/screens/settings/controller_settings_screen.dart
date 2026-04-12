@@ -1,12 +1,11 @@
+import 'package:duskmoon_ui/duskmoon_ui.dart';
 import 'package:app_locale/app_locale.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gamepad_bloc/gamepad_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:json_log_inspector/screens/settings/controller_test_screen.dart';
 import 'package:json_log_inspector/screens/settings/settings_screen.dart';
 import 'package:json_log_inspector/screens/settings/widgets/settings_page_shell.dart';
-import 'package:settings_ui/settings_ui.dart';
 
 class ControllerSettingsScreen extends StatefulWidget {
   static const name = 'Controller Settings';

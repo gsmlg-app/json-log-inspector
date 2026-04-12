@@ -10,7 +10,7 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
-  app_theme: any
+  duskmoon_theme: ^1.4.0
   log_models: any
 
 dev_dependencies:

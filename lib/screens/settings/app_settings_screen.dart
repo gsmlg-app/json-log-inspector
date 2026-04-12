@@ -1,10 +1,8 @@
-import 'package:app_feedback/app_feedback.dart';
+import 'package:duskmoon_ui/duskmoon_ui.dart';
 import 'package:app_locale/app_locale.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:json_log_inspector/screens/settings/settings_screen.dart';
 import 'package:json_log_inspector/screens/settings/widgets/settings_page_shell.dart';
-import 'package:settings_ui/settings_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppSettingsScreen extends StatelessWidget {
@@ -52,18 +50,18 @@ class AppSettingsScreen extends StatelessWidget {
                 ),
                 value: Text(appName ?? 'N/A'),
                 onPressed: (context) {
-                  showAppDialog(
+                  showDmDialog(
                     context: context,
                     title: Text(context.l10n.appName),
                     content: Text(context.l10n.welcomeHome),
                     actions: [
-                      AppDialogAction(
+                      DmDialogAction(
                         onPressed: (context) {
                           Navigator.of(context).pop();
                         },
                         child: Text(context.l10n.ok),
                       ),
-                      AppDialogAction(
+                      DmDialogAction(
                         onPressed: (context) {
                           Navigator.of(context).pop();
                         },

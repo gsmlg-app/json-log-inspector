@@ -1,7 +1,6 @@
+import 'package:duskmoon_ui/duskmoon_ui.dart';
 import 'package:app_locale/app_locale.dart';
-import 'package:app_theme/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gamepad_bloc/gamepad_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:json_log_inspector/screens/settings/accent_color_settings_screen.dart';
@@ -9,8 +8,6 @@ import 'package:json_log_inspector/screens/settings/app_settings_screen.dart';
 import 'package:json_log_inspector/screens/settings/appearance_settings_screen.dart';
 import 'package:json_log_inspector/screens/settings/controller_settings_screen.dart';
 import 'package:json_log_inspector/screens/settings/widgets/settings_page_shell.dart';
-import 'package:settings_ui/settings_ui.dart';
-import 'package:theme_bloc/theme_bloc.dart';
 
 class SettingsScreen extends StatelessWidget {
   static const name = 'Settings';
@@ -20,13 +17,13 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeBloc = context.read<ThemeBloc>();
+    final themeBloc = context.read<DmThemeBloc>();
 
     return DmSettingsPageShell(
       selectedKey: const Key(name),
       title: context.l10n.settingsTitle,
       subtitle: 'Tune appearance, app metadata, and controller behavior.',
-      hero: BlocBuilder<ThemeBloc, ThemeState>(
+      hero: BlocBuilder<DmThemeBloc, DmThemeState>(
         bloc: themeBloc,
         builder: (context, themeState) {
           return BlocBuilder<GamepadBloc, GamepadState>(
@@ -46,7 +43,7 @@ class SettingsScreen extends StatelessWidget {
                     ),
                     DmSettingsMetaPill(
                       icon: Icons.palette_outlined,
-                      label: themeState.theme.name,
+                      label: themeState.themeName,
                     ),
                     DmSettingsMetaPill(
                       icon: Icons.gamepad_outlined,
@@ -61,7 +58,7 @@ class SettingsScreen extends StatelessWidget {
           );
         },
       ),
-      child: BlocBuilder<ThemeBloc, ThemeState>(
+      child: BlocBuilder<DmThemeBloc, DmThemeState>(
         bloc: themeBloc,
         builder: (context, themeState) {
           return BlocBuilder<GamepadBloc, GamepadState>(
@@ -103,7 +100,7 @@ class SettingsScreen extends StatelessWidget {
                         description: const Text(
                           'Choose the active Duskmoon palette.',
                         ),
-                        value: Text(themeState.theme.name),
+                        value: Text(themeState.themeName),
                         onPressed: (context) {
                           context.goNamed(AccentColorSettingsScreen.name);
                         },
